@@ -1,0 +1,896 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Жатақ — общежитие онлайн</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EAEEF2;--card:#FFFFFF;--ink:#17202C;--muted:#5B6676;--line:#D3DAE2;
+  --brand:#0B7C93;--brand-ink:#FFFFFF;--brand-soft:#DDF0F4;
+  --free:#1E8A5A;--free-bg:#D7F1E3;--occ:#7A8596;--occ-bg:#DCE1E8;
+  --pend:#9A6A00;--pend-bg:#FBEBC0;--debt:#B83226;--debt-bg:#F8DCD8;
+  --drum:#151A21;--drum-ink:#F4F6F8;--drum-red:#B3261E;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0F151C;--card:#18212B;--ink:#E5EAF0;--muted:#93A0B1;--line:#2A3645;
+  --brand:#2FB2CC;--brand-ink:#06232A;--brand-soft:#123440;
+  --free:#4FD18F;--free-bg:#123526;--occ:#8693A5;--occ-bg:#26303C;
+  --pend:#F0C24C;--pend-bg:#3A2F10;--debt:#FF7A6E;--debt-bg:#3D1C1A;
+  --drum:#05080B;--drum-ink:#F4F6F8;
+}}
+:root[data-theme="dark"]{
+  --bg:#0F151C;--card:#18212B;--ink:#E5EAF0;--muted:#93A0B1;--line:#2A3645;
+  --brand:#2FB2CC;--brand-ink:#06232A;--brand-soft:#123440;
+  --free:#4FD18F;--free-bg:#123526;--occ:#8693A5;--occ-bg:#26303C;
+  --pend:#F0C24C;--pend-bg:#3A2F10;--debt:#FF7A6E;--debt-bg:#3D1C1A;
+  --drum:#05080B;--drum-ink:#F4F6F8;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Onest,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:Onest,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-weight:700;margin:0;letter-spacing:-.02em}
+h1{font-size:clamp(24px,5vw,36px);line-height:1.12;letter-spacing:-.025em}
+h2{font-size:19px;line-height:1.25}
+h3{font-size:15px;line-height:1.3}
+p{margin:0}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.muted{color:var(--muted)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:12px;min-height:58px;flex-wrap:wrap;padding-top:6px;padding-bottom:6px}
+.brand{display:flex;align-items:center;gap:10px;margin-right:auto}
+.brand b{font-family:Onest,system-ui,sans-serif;font-size:20px;font-weight:700;letter-spacing:-.02em}
+.brand small{display:block;color:var(--muted);font-size:12px;line-height:1.2}
+.seg{display:inline-flex;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px}
+.seg button{border:0;background:none;padding:6px 14px;border-radius:999px;font-weight:600;font-size:14px;cursor:pointer;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+
+.tabs{display:flex;gap:4px;overflow-x:auto;margin:18px 0 16px;border-bottom:1px solid var(--line)}
+.tabs button{border:0;background:none;padding:10px 12px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--brand)}
+.badge{display:inline-block;min-width:20px;padding:0 6px;border-radius:999px;background:var(--pend-bg);color:var(--pend);font-size:12px;text-align:center;margin-left:4px}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.stack>*+*{margin-top:14px}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.grow{flex:1 1 auto}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid transparent;border-radius:9px;padding:9px 16px;font-weight:700;cursor:pointer;background:var(--brand);color:var(--brand-ink);text-decoration:none;font-size:14px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:transparent;border-color:var(--line);color:var(--ink)}
+.btn.sm{padding:6px 11px;font-size:13px}
+.btn.wa{background:#1FA855;color:#fff}
+.btn.danger{background:transparent;border-color:var(--debt);color:var(--debt)}
+.link{background:none;border:0;padding:0;color:var(--brand);font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+
+.intro{padding:26px 0 8px;display:grid;grid-template-columns:1fr;gap:18px}
+@media(min-width:820px){.intro{grid-template-columns:1.4fr 1fr;align-items:end}}
+.intro p{max-width:56ch;margin-top:8px;color:var(--muted)}
+
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin:14px 0}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:14px;height:14px;border-radius:3px;display:inline-block}
+
+.floor{margin:22px 0 8px;display:flex;align-items:baseline;gap:10px}
+.rooms{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:12px}
+.room{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 12px 14px}
+.room header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.room header b{font-family:Onest,system-ui,sans-serif;font-size:17px}
+.room header span{font-size:12px;color:var(--muted)}
+.room.click{cursor:pointer}
+.bunks{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.bunk{display:flex;flex-direction:column;gap:4px;border:2px solid var(--line);border-top-width:4px;border-radius:5px;padding:4px}
+.bed{height:30px;border:0;border-radius:3px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0}
+.bed.free{background:var(--free-bg);color:var(--free);cursor:pointer;box-shadow:inset 0 0 0 1.5px var(--free)}
+.bed.free:hover{background:var(--free);color:var(--card)}
+.bed.occ{background:var(--occ-bg);color:var(--occ)}
+.bed.pend{background:var(--pend-bg);color:var(--pend)}
+.bed.debt{background:var(--debt-bg);color:var(--debt)}
+.bed.me{background:var(--brand);color:var(--brand-ink)}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.stat b{display:block;font-family:Onest,system-ui,sans-serif;font-size:22px;font-weight:600;margin-top:2px;font-variant-numeric:tabular-nums}
+.stat small{color:var(--muted);font-size:13px}
+.stat.red b{color:var(--debt)}
+
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-weight:600;color:var(--muted);font-size:12.5px;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.total td{font-weight:800;border-bottom:0}
+tr.clickrow{cursor:pointer}
+tr.clickrow:hover td{background:var(--brand-soft)}
+
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}
+.pill.ok{background:var(--free-bg);color:var(--free)}
+.pill.no{background:var(--debt-bg);color:var(--debt)}
+.pill.wait{background:var(--pend-bg);color:var(--pend)}
+
+/* The odometer: readings look like the drums on a real meter */
+.odo{display:inline-flex;gap:2px;vertical-align:middle}
+.odo span{background:var(--drum);color:var(--drum-ink);font:700 17px/1 Onest,system-ui,sans-serif;font-variant-numeric:tabular-nums;padding:7px 0;width:19px;text-align:center;border-radius:3px;box-shadow:inset 0 6px 6px -5px rgba(255,255,255,.25),inset 0 -6px 6px -5px rgba(0,0,0,.6)}
+.odo span.fr{background:var(--drum-red)}
+.odo.sm span{font-size:13px;width:15px;padding:5px 0}
+
+.meters{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.meter{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;border-top:5px solid var(--mc)}
+.meter.elec{--mc:#E3A71B}.meter.hot{--mc:#D9473A}.meter.cold{--mc:#2C78C9}
+.meter .prev{font-size:13px;color:var(--muted);margin:8px 0 12px}
+.meter .prev .odo{margin-top:6px}
+.photo-btn{display:flex;align-items:center;justify-content:center;gap:8px;border:2px dashed var(--line);border-radius:10px;padding:14px;cursor:pointer;font-weight:700;color:var(--brand)}
+.photo-btn:hover{border-color:var(--brand)}
+.thumb{width:100%;max-height:170px;object-fit:cover;border-radius:8px;margin-top:10px;display:block}
+.status{font-size:13px;margin-top:8px;min-height:1em}
+.status.ok{color:var(--free)}.status.warn{color:var(--pend)}.status.err{color:var(--debt)}
+.fld{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-top:10px}
+.fld input,.fld select{display:block;width:100%;margin-top:4px;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:var(--bg);font-size:16px;color:var(--ink);font-weight:500}
+.fld input:focus,.fld select:focus{border-color:var(--brand);outline:none;box-shadow:0 0 0 3px var(--brand-soft)}
+.delta{font-size:13px;margin-top:6px;font-weight:600}
+.grid2{display:grid;gap:0 14px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+
+.balance{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.balance b{font-family:Onest,system-ui,sans-serif;font-size:28px;font-weight:600;font-variant-numeric:tabular-nums}
+.item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}
+.item .t{font-weight:700}
+.item .s{font-size:13px;color:var(--muted)}
+.item .amt{font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+#modal{position:fixed;inset:0;z-index:50;background:rgba(10,15,22,.55);display:flex;align-items:flex-end;justify-content:center;padding:0}
+#modal[hidden]{display:none}
+#modal .sheet{background:var(--card);width:100%;max-width:640px;max-height:92%;overflow:auto;border-radius:16px 16px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom,0px))}
+@media(min-width:700px){#modal{align-items:center;padding:20px}#modal .sheet{border-radius:16px;padding-bottom:20px}}
+.sheet-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px}
+.x{border:0;background:var(--bg);width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:18px;flex:none}
+#toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:10px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:60;max-width:90%}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+footer{margin:40px 0 30px;font-size:13px;color:var(--muted)}
+.note{background:var(--brand-soft);border-radius:10px;padding:12px 14px;font-size:14px}
+.photos{display:flex;gap:8px;flex-wrap:wrap}
+.photos img{width:86px;height:86px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+.spin{display:inline-block;width:12px;height:12px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:sp .8s linear infinite;vertical-align:-1px}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 14px;font-weight:600;font-size:14px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip.add{border-style:dashed;color:var(--brand)}
+.cat{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));margin-top:8px}
+.dorm{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.dorm h3{font-size:17px}
+.bar{height:8px;border-radius:4px;background:var(--occ-bg);overflow:hidden;display:flex}
+.bar i{display:block;background:var(--free)}
+.dorm .meta{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+.back{margin-top:18px}
+.chk{display:flex;gap:8px;align-items:center;font-size:14px;margin-top:12px;font-weight:600}
+.chk input{width:18px;height:18px}
+.drop{border:2px dashed var(--line);border-radius:12px;padding:22px;text-align:center;cursor:pointer;display:block}
+.drop:hover{border-color:var(--brand)}
+.code{font-family:Onest,system-ui,sans-serif;font-weight:800;letter-spacing:.12em}
+.otp-in{font-size:26px!important;letter-spacing:.4em;text-align:center;font-weight:800!important}
+.steps{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));counter-reset:st}
+.steps div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;font-size:14px}
+.steps div b{display:block;font-family:Onest,system-ui,sans-serif;font-weight:600;font-size:14px;margin-bottom:4px}
+.steps div b::before{counter-increment:st;content:counter(st) ". ";color:var(--brand)}
+
+.seg.lang button{padding:6px 10px;font-size:13px}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div class="brand">
+    <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="3" y="4" width="28" height="26" rx="4" fill="none" stroke="currentColor" stroke-width="2.5"/><rect x="7" y="9" width="20" height="6" rx="1.5" fill="#0B7C93"/><rect x="7" y="19" width="20" height="6" rx="1.5" fill="#E3A71B"/></svg>
+    <div><b id="brand">Жатақ</b><small id="bname"></small></div>
+  </div>
+  <div class="seg" role="group" aria-label="Mode">
+    <button data-a="role" data-v="student" id="r-student"></button>
+    <button data-a="role" data-v="owner" id="r-owner"></button>
+    <button data-a="role" data-v="admin" id="r-admin"></button>
+  </div>
+  <div class="seg lang" role="group" aria-label="Тіл / Язык / Language">
+    <button data-a="lang" data-v="kk" id="l-kk" lang="kk">ҚАЗ</button>
+    <button data-a="lang" data-v="ru" id="l-ru" lang="ru">РУС</button>
+    <button data-a="lang" data-v="en" id="l-en" lang="en">ENG</button>
+  </div>
+</div></header>
+<main id="app" class="wrap"></main>
+<div class="wrap"><footer id="foot"></footer></div>
+<div id="modal" hidden><div class="sheet" role="dialog" aria-modal="true" id="sheet"></div></div>
+<div id="toast" role="status"></div>
+<script>
+/* ================= translations: kk / ru / en ================= */
+const I18N={
+ru:{
+brand:'Жатақ',roleStudent:'Студент',roleOwner:'Владелец',rolePlatform:'Платформа',dormsOnline:'Общежития онлайн',platformPanel:'Панель платформы',
+footer:'Демо-версия: данные хранятся только в этом браузере.',resetDemo:'Сбросить демо-данные',resetConfirm:'Сбросить все демо-данные?',resetDone:'Демо-данные сброшены',saveFail:'Не удалось сохранить: память браузера заполнена',close:'Закрыть',
+bed_lower:'нижнее',bed_upper:'верхнее',placeTyped:'{type} место',bedTypedN:'{type} место №{n}',bedN:'место №{n}',
+u_kwh:'кВт·ч',u_m3:'м³',u_mon:'мес',u_ppl:'чел',
+m_elec:'Электричество',m_hot:'Горячая вода',m_cold:'Холодная вода',
+l_elec:'Электроэнергия',l_hot:'Горячая вода',l_cold:'Холодная вода',l_sewage:'Канализация гор. и хол. воды',l_internet:'Интернет',l_vdgo:'ВДГО',l_maint:'Расходы на содержание дома',l_garbage:'Вывоз мусора',l_commonElec:'Электроэнергия общего пользования',l_rentT:'Проживание ({type} место)',l_rent1:'Проживание',
+utilTitle:'Коммунальные за {a}–{b}',rentTitle:'Проживание, {m}',
+th_service:'Услуга',th_qty:'Кол-во',th_price:'Цена',th_sum:'Сумма',roomTotal:'Итого по комнате',shareEach:'Доля каждого: {t} ÷ {n}',
+otpSent:'Код отправлен на {p}',otpDemo:'Демо: в рабочей версии код придёт в SMS или WhatsApp. Сейчас ваш код —',otpField:'Код из сообщения',confirm:'Подтвердить',resend:'Отправить код ещё раз',otpBad:'Код не подходит. Осталось попыток: {n}',otpMany:'Слишком много попыток. Запросите код заново',newCode:'Новый код',
+floorN:'{n} этаж',freeN:'свободно: {n}',freeOf:'свободно {n} из {t}',noBeds:'мест нет',st_free:'Свободно',st_occ:'Занято',st_req:'Заявка',st_mine:'Ваше место',st_debt:'Есть долг',bedAria:'Место {n}: {s}',noRooms:'Комнат пока нет.',
+lg_freeClick:'Свободно — нажмите, чтобы занять',lg_occ:'Занято',lg_pend:'Ожидает подтверждения',lg_free:'Свободно',lg_paid:'Живёт, без долга',lg_debt:'Есть долг',lg_req:'Заявка',lg_bunk:'Верхний квадрат — верхнее место, нижний — нижнее',
+allDorms:'Все общежития',dormIntroBunk:'{city}, {addr}. Нижнее место — {lo}, верхнее — {up} в месяц. Коммунальные платежи считаются по счётчикам и делятся на жильцов комнаты.',dormIntroOne:'{city}, {addr}. {lo} в месяц. Коммунальные платежи считаются по счётчикам и делятся на жильцов комнаты.',
+heroTitle:'Место в общежитии без звонков',heroText:'Выберите общежитие и свободное место на схеме. После заселения счета за проживание и коммунальные услуги приходят в кабинет, а оплатить их можно онлайн.',alreadyLive:'Уже живёте в общежитии?',phone:'Номер телефона',getCode:'Получить код для входа',forDemo:'Для демо:',freeOfShort:'Свободно {n} из {t}',fromPrice:'от {p} в месяц',chooseBed:'Выбрать место',full:'Мест нет',
+cabTitle:'{name}, комната {r}',uniUnknown:'вуз не указан',courseN:'{n} курс',logout:'Выйти',pendPill:'Заявка на рассмотрении',pendText:'{bed} в комнате {r} закреплено за вами до решения владельца. Ответ придёт на номер {p}.',pendText2:'Заезд: {d}. Проживание: {p} в месяц.',cancelReq:'Отменить заявку',
+tabBills:'Счета',tabMeters:'Показания счётчиков',tabProfile:'Комната и профиль',toPay:'К оплате',noDebt:'Задолженности нет',payAll:'Оплатить всё',paidOn:'Оплачено {d}',issuedOn:'Выставлен {d}',billDetails:'состав счёта',paid:'Оплачено',pay:'Оплатить',unpaid:'Неоплаченные',history:'История оплат',noBills:'Счетов пока нет.',
+meterDue:'Пора передать показания счётчиков комнаты {r}: последние были {d}.',meterFirst:'Передайте первые показания счётчиков комнаты {r} — от них начнётся расчёт.',snapMeters:'Сфотографировать счётчики',sent:'Показания переданы',sentText:'Показания комнаты {r} переданы {d}{by}.',byYou:' — вами',byName:' — {n}',nextAfter:'Следующие — после {d}.',
+meterIntro:'Сфотографируйте три счётчика комнаты {r}. Система распознает показания, рассчитает счёт и разделит его на всех жильцов комнаты ({n}).',meterIntroFirst:'Это первые показания комнаты {r}: они станут точкой отсчёта, счёт за них не выставляется.',oneEnough:'Достаточно, чтобы это сделал один человек из комнаты.',noOcr:'Автоматическое распознавание в этом окне недоступно — прикрепите фото и введите цифры вручную. Фото увидит владелец.',
+prevReading:'Прошлое показание, {d}, {u}',snap:'Сфотографировать',resnap:'Переснять',meterPhoto:'Фото счётчика',curReading:'Текущее показание',moreThan:'больше {v}',egReading:'например 6844,5',less:'Меньше прошлого показания — проверьте цифры',usage:'Расход: {v} {u}',tooMuch:' — необычно много, проверьте',billH:'Счёт',enterAll:'Введите все три показания — счёт рассчитается автоматически.',enterAllFirst:'Введите все три показания и отправьте их как начальные.',sendFirst:'Отправить начальные показания',billFor:'Счёт за {a}–{b} ({n} дн.)',sendAndBill:'Отправить показания и выставить счёт',eachGets:'Каждый жилец получит долю {p}',
+roommates:'Соседи по комнате {r}',you:' (вы)',myData:'Мои данные',parentPhone:'Телефон родителей',dorm:'Общежитие',checkIn:'Дата заезда',
+photoOpenErr:'Не удалось открыть фото. Попробуйте JPEG или PNG.',photoAttached:'Фото прикреплено. Введите цифры с фото в поле ниже.',recognizing:'Распознаю показания…',recLow:'Распознано {v}, но есть сомнения{n}. Сверьте с фото.',recOk:'Распознано: {v} {u}. Проверьте, что совпадает с фото.',recFail:'Цифры не читаются. Переснимите ближе или введите вручную.',recDenied:'Распознавание не разрешено — введите цифры вручную.',recRate:'Слишком много запросов. Подождите минуту или введите вручную.',recErr:'Не удалось распознать. Введите цифры с фото вручную.',
+ownerCab:'Кабинет владельца общежития',ownerCabText:'Заявки студентов, оплаты, долги и показания счётчиков по всем вашим общежитиям в одном месте.',ownerLoginH:'Вход для владельцев',nDorms:'общежитий: {n}',howConnect:'Как подключить своё общежитие',
+step1h:'Заявка или приглашение',step1:'Оставьте заявку ниже или откройте ссылку-приглашение, если мы её вам прислали.',step2h:'Подтверждение номера',step2:'Вход по коду из SMS, без паролей.',step3h:'Здание и тарифы',step3:'Этажи, комнаты, количество мест, цены на места и коммунальные услуги.',step4h:'Список жильцов',step4:'Загрузите вашу Excel-таблицу — жильцы получат приглашение в WhatsApp.',
+applyH:'Заявка на подключение',yourName:'Ваше имя',phoneShort:'Телефон',dormName:'Название общежития',city:'Город',placesApprox:'Сколько мест примерно',sendReq:'Отправить заявку',apErr:'Заполните имя, название общежития и город.',phoneErr:'Укажите телефон из 11 цифр, например 8 707 123 45 67.',phone11:'Введите номер из 11 цифр',confirmPhone:'Подтвердите номер',
+reqSentPill:'Заявка отправлена',thanks:'Спасибо, {n}',reqSentText:'Мы проверим заявку и пришлём приглашение на {p} в WhatsApp. Обычно это занимает один рабочий день.',reqSentDemo:'В демо заявку можно одобрить в режиме «Платформа», вкладка «Заявки владельцев».',
+inviteH:'Приглашение в Жатақ',inviteText:'{n}, вас пригласили подключить «{d}» ({c}). Подтвердите номер, затем опишите здание и тарифы — это займёт около 10 минут.',inviteCodeTo:'Код придёт на {p} — номер, указанный в приглашении.',getCodeBtn:'Получить код',notNow:'Не сейчас',ownerNotFound:'Владелец с таким номером не найден. Оставьте заявку на подключение ниже',ownerSignIn:'Вход для владельца',
+newDorm:'Новое общежитие',wizText:'Опишите здание. Комнаты и места создадутся автоматически, потом их можно дополнить при импорте списка жильцов.',cancel:'Отмена',name:'Название',address:'Адрес',addrPh:'ул. Абая, 10',floors:'Этажей',perFloor:'Комнат на этаже',bedsPerRoom:'Мест в комнате',bunks:'Двухъярусные кровати (верхние и нижние места)',rentLowerW:'Аренда, нижнее или обычное место, ₸ в месяц',rentUpperW:'Аренда, верхнее место, ₸ в месяц',tariffsDefault:'Тарифы на коммунальные услуги заполнятся типовыми значениями — поменяете их во вкладке «Тарифы».',createDorm:'Создать общежитие',wizSum:'Комнат: {r}, мест: {b}. Номера комнат: {list}.',wzErrName:'Укажите название и город.',wzErrSize:'Этажей — от 1 до 40, комнат на этаже — от 1 до 60.',wzErrRent:'Укажите цену аренды.',dormCreated:'Общежитие создано. Загрузите список жильцов',
+dormSub:'{city}, {addr}. Комнат: {r}, мест: {b}.',addDorm:'Добавить общежитие',tabOverview:'Обзор',tabRooms:'Комнаты',tabRequests:'Заявки',tabImport:'Импорт жильцов',tabTariffs:'Тарифы',
+occBeds:'Занято мест',gotIn:'Получено за {m}',resDebt:'Долг жильцов',newReqs:'Новые заявки',notJoined:'Импортированные жильцы, которые ещё не вошли в кабинет: {n}.',resendInv:'Отправить приглашение повторно',lateMeters:'Нет показаний счётчиков больше месяца: {list}. Жильцы этих комнат видят напоминание в кабинете.',debtors:'Должники ({n})',
+th_res:'Жилец',th_room:'Комната',th_uni:'Университет',th_debt:'Долг',remindWA:'Напомнить в WhatsApp',noDebts:'Долгов нет',remindText:'Здравствуйте, {n}! Напоминаем об оплате за общежитие (комната {r}): {s}. Счета и оплата — в личном кабинете Жатақ.',
+noReqs:'Новых заявок нет',noReqsText:'Когда студент выберет место на сайте, заявка появится здесь.',reqLine:'Комната {r}, {bed}, заезд {d}',waits:'Ждёт решения',phoneVerified:'Телефон (подтверждён)',parents:'Родители',uniCourse:'Университет, курс',approve:'Подтвердить заселение',reject:'Отклонить',
+rentFor:'Аренда за {m}',rentForText:'Счёт получит каждый жилец по цене его места.',issueRent:'Выставить аренду',allBills:'Все счета',th_bill:'Счёт',th_issued:'Выставлен',th_paidN:'Оплатили',th_got:'Получено',th_exp:'Ожидается',allRes:'(все жильцы)',roomN:'комната {r}',ofN:'{a} из {b}',
+tariffsH:'Тарифы: {d}',tariffsNote:'Новые тарифы применяются к следующим счетам. Уже выставленные не меняются.',perKwh:'₸ за кВт·ч',perM3:'₸ за м³',perRoom:'₸ в месяц на комнату',perPerson:'₸ в месяц на человека',perMonth:'₸ в месяц',rentLowerT:'Аренда, нижнее место',rentUpperT:'Аренда, верхнее место',rentBed:'Аренда места',saveTariffs:'Сохранить тарифы',tariffsSaved:'Тарифы сохранены',numsNeeded:'Проверьте значения — нужны числа',
+impH:'Загрузите вашу таблицу жильцов',impText:'Подойдёт таблица в том виде, в каком вы её ведёте сейчас: Excel или CSV. Нужны столбцы «ФИО» и «телефон»; номер комнаты, университет, «верхнее/нижнее место» и контакты родителей подхватятся, если они есть. Если номер комнаты указан только в первой строке группы, остальные жильцы попадут в ту же комнату. Заголовки могут быть на казахском, русском или английском.',chooseFile:'Выбрать файл .xlsx или .csv',gsheets:'Из Google Таблиц: Файл, Скачать, Microsoft Excel',trySample:'Попробовать на примере таблицы',reading:'Читаю таблицу…',xlsxLoadErr:'Не удалось загрузить модуль чтения Excel. Проверьте интернет и попробуйте снова.',noFio:'Не нашёл ни одного листа со столбцом «ФИО». Добавьте заголовок «ФИО» над списком жильцов.',badFile:'Файл не читается. Сохраните его как .xlsx или .csv и попробуйте снова.',
+checkH:'Проверьте перед импортом',checkText:'Строк найдено: {n}{sheet}. Будет добавлено жильцов: {ok}.',onSheet:' (лист «{s}»)',newRoomsWill:' Будут созданы комнаты: {l}.',th_rm:'Комн.',th_name:'ФИО',th_bed:'Место',noPhone:'нет',s_ok:'Будет добавлен',s_new:'Новая комната',s_dup:'Уже в системе',s_noroom:'Не указана комната',s_full:'Нет свободного места',noPhoneNote:'Жильцы без телефона будут добавлены, но не смогут войти в кабинет, пока вы не впишете номер.',sendWA:'Отправить жильцам приглашение в WhatsApp',addN:'Добавить жильцов: {n}',addedN:'Добавлено жильцов: {n}',invSentN:', приглашений отправлено: {n}',sampleSheet:'Пример',
+tabDorms:'Общежития',tabApps:'Заявки владельцев',tabInv:'Приглашения',appNew:'Новая',appFrom:'{c}, {p}. Заявка от {d}',ownerL:'Владелец',appApprove:'Одобрить и отправить приглашение',noApps:'Новых заявок нет',noAppsText:'Заявки появляются, когда владелец заполняет форму «Заявка на подключение» в кабинете владельца.',inviteOwner:'Пригласить владельца',ownerName:'Имя владельца',ownerPhone:'Телефон владельца',createInv:'Создать приглашение',fillAll:'Заполните все поля.',sentInv:'Отправленные приглашения',link:'Ссылка',connected:'Подключено',send:'Отправить',openAsOwner:'Открыть как владелец',invMsg:'Здравствуйте, {n}! Приглашаем подключить «{d}» к Жатақ: {l}',
+dormsN:'Общежитий',ownersN:'Владельцев',studentsN:'Студентов живёт',allDormsH:'Все общежития',th_dorm:'Общежитие',th_city:'Город',th_owner:'Владелец',th_occ:'Занято',rowHint:'Нажмите на строку, чтобы открыть кабинет владельца этого общежития.',platTitle:'Платформа Жатақ',platText:'Здесь вы подключаете новых владельцев и видите все общежития в системе.',invCreated:'Приглашение создано: {l}',rejectAppQ:'Отклонить заявку?',
+roomH:'Комната {r}',roomSub:'{f} этаж, живёт {a} из {t}',metersH:'Показания счётчиков',submittedBy:'Передал(а): {n}',byAdmin:'Внесено администратором',noReadings:'Показаний ещё нет. Первые показания передаст кто-то из жильцов.',residents:'Жильцы',debtAmt:'Долг {s}',cabinet:'Кабинет',notSignedIn:'ещё не входил(а)',activeAcc:'активен',notGiven:'не указан',markPaid:'Отметить оплату',evict:'Выселить и освободить место',evictQ:'Выселить: {n}? Место станет свободным, история оплат сохранится.',moved:'Место освобождено',notPaid:'Не оплачено',movedOut:'Выселен(а)',cash:'наличные',
+bookSub:'{p} в месяц плюс коммунальные по счётчикам',fio:'ФИО',fioPh:'Фамилия Имя',university:'Университет',other:'Другой',uniName:'Название университета',course:'Курс',bookBtn:'Подтвердить номер и занять место',bkErrName:'Укажите фамилию и имя.',bkErrUni:'Укажите университет.',bkErrDup:'Этот номер уже зарегистрирован. Войдите в кабинет с главной страницы.',bedTaken:'Это место только что заняли. Выберите другое',reqSent:'Заявка отправлена владельцу',reqCancelled:'Заявка отменена, место освобождено',
+payH:'Оплата',nBills:'Счетов: {n}',payDemo:'Демо: в рабочей версии здесь откроется Kaspi Pay или оплата картой, и счёт отметится оплаченным автоматически после подтверждения банка.',payKaspi:'Оплатить через Kaspi',payCard:'Оплатить картой',card:'карта',paidSum:'Оплачено {s}',signInH:'Вход в кабинет',phoneNotFound:'Этот номер не найден. Выберите общежитие и свободное место',checkReadings:'Проверьте показания',readingsBilled:'Показания приняты, счёт выставлен жильцам: {n}',firstSaved:'Начальные показания сохранены',paymentMarked:'Оплата отмечена',approved:'{n}: заселение подтверждено',rejectQ:'Отклонить заявку и освободить место?',rejected:'Заявка отклонена',reinvSent:'Приглашение отправлено повторно: {n}',rentExists:'Аренда за этот месяц уже выставлена',rentIssued:'Счета за аренду выставлены жильцам: {n}',
+months:['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь']
+},
+kk:{
+brand:'Жатақ',roleStudent:'Студент',roleOwner:'Иесі',rolePlatform:'Платформа',dormsOnline:'Жатақханалар онлайн',platformPanel:'Платформа панелі',
+footer:'Демо-нұсқа: деректер тек осы браузерде сақталады.',resetDemo:'Демо-деректерді тазарту',resetConfirm:'Барлық демо-деректерді тазарту керек пе?',resetDone:'Демо-деректер тазартылды',saveFail:'Сақталмады: браузер жады толы',close:'Жабу',
+bed_lower:'төменгі',bed_upper:'жоғарғы',placeTyped:'{type} орын',bedTypedN:'№{n} {type} орын',bedN:'№{n} орын',
+u_kwh:'кВт·сағ',u_m3:'м³',u_mon:'ай',u_ppl:'адам',
+m_elec:'Электр энергиясы',m_hot:'Ыстық су',m_cold:'Суық су',
+l_elec:'Электр энергиясы',l_hot:'Ыстық су',l_cold:'Суық су',l_sewage:'Ыстық және суық су кәрізі',l_internet:'Интернет',l_vdgo:'Газ жабдығына қызмет көрсету',l_maint:'Үйді күтіп ұстау шығыстары',l_garbage:'Қоқыс шығару',l_commonElec:'Ортақ пайдаланудағы электр энергиясы',l_rentT:'Тұру ({type} орын)',l_rent1:'Тұру',
+utilTitle:'Коммуналдық төлем: {a}–{b}',rentTitle:'Тұру ақысы, {m}',
+th_service:'Қызмет',th_qty:'Саны',th_price:'Бағасы',th_sum:'Сомасы',roomTotal:'Бөлме бойынша барлығы',shareEach:'Әркімнің үлесі: {t} ÷ {n}',
+otpSent:'Код {p} нөміріне жіберілді',otpDemo:'Демо: нақты нұсқада код SMS немесе WhatsApp арқылы келеді. Сіздің кодыңыз —',otpField:'Хабарламадағы код',confirm:'Растау',resend:'Кодты қайта жіберу',otpBad:'Код қате. Қалған әрекет: {n}',otpMany:'Әрекет тым көп. Кодты қайта сұраңыз',newCode:'Жаңа код',
+floorN:'{n}-қабат',freeN:'бос: {n}',freeOf:'бос: {n} / {t}',noBeds:'орын жоқ',st_free:'Бос',st_occ:'Бос емес',st_req:'Өтінім',st_mine:'Сіздің орныңыз',st_debt:'Қарызы бар',bedAria:'{n}-орын: {s}',noRooms:'Әзірге бөлмелер жоқ.',
+lg_freeClick:'Бос — орынды алу үшін басыңыз',lg_occ:'Бос емес',lg_pend:'Растауды күтуде',lg_free:'Бос',lg_paid:'Тұрады, қарызы жоқ',lg_debt:'Қарызы бар',lg_req:'Өтінім',lg_bunk:'Жоғарғы шаршы — жоғарғы орын, төменгісі — төменгі орын',
+allDorms:'Барлық жатақханалар',dormIntroBunk:'{city}, {addr}. Төменгі орын — айына {lo}, жоғарғы орын — {up}. Коммуналдық төлем есептегіштер бойынша есептеліп, бөлме тұрғындарына бөлінеді.',dormIntroOne:'{city}, {addr}. Айына {lo}. Коммуналдық төлем есептегіштер бойынша есептеліп, бөлме тұрғындарына бөлінеді.',
+heroTitle:'Жатақханадан орынды қоңыраусыз табыңыз',heroText:'Жатақхананы және сызбадан бос орынды таңдаңыз. Қоныстанғаннан кейін тұру және коммуналдық қызмет шоттары жеке кабинетке келеді, оларды онлайн төлеуге болады.',alreadyLive:'Жатақханада тұрасыз ба?',phone:'Телефон нөмірі',getCode:'Кіру кодын алу',forDemo:'Демо үшін:',freeOfShort:'Бос: {n} / {t}',fromPrice:'айына {p} бастап',chooseBed:'Орын таңдау',full:'Орын жоқ',
+cabTitle:'{name}, {r}-бөлме',uniUnknown:'ЖОО көрсетілмеген',courseN:'{n}-курс',logout:'Шығу',pendPill:'Өтінім қаралуда',pendText:'{r}-бөлмедегі {bed} иесі шешім қабылдағанша сізге бекітілді. Жауап {p} нөміріне келеді.',pendText2:'Кіру күні: {d}. Тұру ақысы: айына {p}.',cancelReq:'Өтінімді болдырмау',
+tabBills:'Шоттар',tabMeters:'Есептегіш көрсеткіштері',tabProfile:'Бөлме және профиль',toPay:'Төлеуге',noDebt:'Қарыз жоқ',payAll:'Барлығын төлеу',paidOn:'{d} төленді',issuedOn:'{d} шығарылды',billDetails:'шот құрамы',paid:'Төленді',pay:'Төлеу',unpaid:'Төленбегендер',history:'Төлем тарихы',noBills:'Әзірге шоттар жоқ.',
+meterDue:'{r}-бөлме есептегіштерінің көрсеткішін беретін уақыт келді: соңғысы {d} берілген.',meterFirst:'{r}-бөлме есептегіштерінің алғашқы көрсеткішін беріңіз — есеп солардан басталады.',snapMeters:'Есептегіштерді суретке түсіру',sent:'Көрсеткіштер берілді',sentText:'{r}-бөлме көрсеткіштері {d} берілді{by}.',byYou:' (сіз бердіңіз)',byName:' ({n} берді)',nextAfter:'Келесісі — {d} кейін.',
+meterIntro:'{r}-бөлмедегі үш есептегішті суретке түсіріңіз. Жүйе көрсеткіштерді танып, шотты есептейді және оны бөлменің барлық тұрғындарына ({n}) бөледі.',meterIntroFirst:'Бұл {r}-бөлменің алғашқы көрсеткіштері: олар бастапқы нүкте болады, оларға шот шығарылмайды.',oneEnough:'Мұны бөлмедегі бір адамның жасауы жеткілікті.',noOcr:'Бұл терезеде автоматты тану қолжетімсіз — суретті тіркеп, сандарды қолмен енгізіңіз. Суретті иесі көреді.',
+prevReading:'Алдыңғы көрсеткіш, {d}, {u}',snap:'Суретке түсіру',resnap:'Қайта түсіру',meterPhoto:'Есептегіш суреті',curReading:'Ағымдағы көрсеткіш',moreThan:'{v} артық',egReading:'мысалы 6844,5',less:'Алдыңғы көрсеткіштен аз — сандарды тексеріңіз',usage:'Шығын: {v} {u}',tooMuch:' — әдеттен тыс көп, тексеріңіз',billH:'Шот',enterAll:'Үш көрсеткішті де енгізіңіз — шот автоматты түрде есептеледі.',enterAllFirst:'Үш көрсеткішті енгізіп, бастапқы ретінде жіберіңіз.',sendFirst:'Бастапқы көрсеткіштерді жіберу',billFor:'{a}–{b} аралығындағы шот ({n} күн)',sendAndBill:'Көрсеткіштерді жіберіп, шот шығару',eachGets:'Әр тұрғынның үлесі: {p}',
+roommates:'{r}-бөлмедегі көршілер',you:' (сіз)',myData:'Менің деректерім',parentPhone:'Ата-ананың телефоны',dorm:'Жатақхана',checkIn:'Кіру күні',
+photoOpenErr:'Суретті ашу мүмкін болмады. JPEG немесе PNG қолданып көріңіз.',photoAttached:'Сурет тіркелді. Суреттегі сандарды төмендегі өріске енгізіңіз.',recognizing:'Көрсеткіштер танылуда…',recLow:'{v} танылды, бірақ күмән бар{n}. Суретпен салыстырыңыз.',recOk:'Танылды: {v} {u}. Суретпен сәйкес екенін тексеріңіз.',recFail:'Сандар оқылмайды. Жақыннан қайта түсіріңіз немесе қолмен енгізіңіз.',recDenied:'Тануға рұқсат берілмеді — сандарды қолмен енгізіңіз.',recRate:'Сұраныс тым көп. Бір минут күтіңіз немесе қолмен енгізіңіз.',recErr:'Тану мүмкін болмады. Суреттегі сандарды қолмен енгізіңіз.',
+ownerCab:'Жатақхана иесінің кабинеті',ownerCabText:'Студенттердің өтінімдері, төлемдер, қарыздар және есептегіш көрсеткіштері — барлық жатақханаларыңыз бойынша бір жерде.',ownerLoginH:'Иелерге арналған кіру',nDorms:'жатақхана: {n}',howConnect:'Жатақханаңызды қалай қосуға болады',
+step1h:'Өтінім немесе шақыру',step1:'Төменде өтінім қалдырыңыз немесе біз жіберген шақыру сілтемесін ашыңыз.',step2h:'Нөмірді растау',step2:'SMS-кодпен кіру, құпиясөзсіз.',step3h:'Ғимарат және тарифтер',step3:'Қабаттар, бөлмелер, орын саны, орын бағасы және коммуналдық тарифтер.',step4h:'Тұрғындар тізімі',step4:'Excel кестеңізді жүктеңіз — тұрғындарға WhatsApp арқылы шақыру келеді.',
+applyH:'Қосылуға өтінім',yourName:'Атыңыз',phoneShort:'Телефон',dormName:'Жатақхана атауы',city:'Қала',placesApprox:'Шамамен қанша орын',sendReq:'Өтінім жіберу',apErr:'Атыңызды, жатақхана атауын және қаланы толтырыңыз.',phoneErr:'11 саннан тұратын телефон енгізіңіз, мысалы 8 707 123 45 67.',phone11:'11 саннан тұратын нөмір енгізіңіз',confirmPhone:'Нөмірді растаңыз',
+reqSentPill:'Өтінім жіберілді',thanks:'Рахмет, {n}',reqSentText:'Өтінімді тексеріп, {p} нөміріне WhatsApp арқылы шақыру жібереміз. Әдетте бұл бір жұмыс күнін алады.',reqSentDemo:'Демода өтінімді «Платформа» режиміндегі «Иелердің өтінімдері» қойындысында мақұлдауға болады.',
+inviteH:'Жатаққа шақыру',inviteText:'{n}, сізді «{d}» ({c}) жатақханасын қосуға шақырды. Нөміріңізді растаңыз, содан кейін ғимарат пен тарифтерді сипаттаңыз — шамамен 10 минут кетеді.',inviteCodeTo:'Код шақыруда көрсетілген {p} нөміріне келеді.',getCodeBtn:'Код алу',notNow:'Кейінірек',ownerNotFound:'Мұндай нөмірлі иесі табылмады. Төменде қосылуға өтінім қалдырыңыз',ownerSignIn:'Иесі ретінде кіру',
+newDorm:'Жаңа жатақхана',wizText:'Ғимаратты сипаттаңыз. Бөлмелер мен орындар автоматты түрде жасалады, кейін тұрғындар тізімін жүктегенде толықтыруға болады.',cancel:'Болдырмау',name:'Атауы',address:'Мекенжай',addrPh:'Абай к-сі, 10',floors:'Қабат саны',perFloor:'Қабаттағы бөлме саны',bedsPerRoom:'Бөлмедегі орын саны',bunks:'Екі қабатты кереуеттер (жоғарғы және төменгі орындар)',rentLowerW:'Жалдау, төменгі немесе қарапайым орын, айына ₸',rentUpperW:'Жалдау, жоғарғы орын, айына ₸',tariffsDefault:'Коммуналдық тарифтер үлгі мәндермен толтырылады — оларды «Тарифтер» қойындысында өзгертесіз.',createDorm:'Жатақхана құру',wizSum:'Бөлме саны: {r}, орын саны: {b}. Бөлме нөмірлері: {list}.',wzErrName:'Атауы мен қаланы көрсетіңіз.',wzErrSize:'Қабат саны 1-ден 40-қа дейін, қабаттағы бөлме саны 1-ден 60-қа дейін.',wzErrRent:'Жалдау бағасын көрсетіңіз.',dormCreated:'Жатақхана құрылды. Тұрғындар тізімін жүктеңіз',
+dormSub:'{city}, {addr}. Бөлме: {r}, орын: {b}.',addDorm:'Жатақхана қосу',tabOverview:'Шолу',tabRooms:'Бөлмелер',tabRequests:'Өтінімдер',tabImport:'Тұрғындарды жүктеу',tabTariffs:'Тарифтер',
+occBeds:'Бос емес орындар',gotIn:'{m} айында түсті',resDebt:'Тұрғындардың қарызы',newReqs:'Жаңа өтінімдер',notJoined:'Кабинетке әлі кірмеген жүктелген тұрғындар: {n}.',resendInv:'Шақыруды қайта жіберу',lateMeters:'Бір айдан астам есептегіш көрсеткіштері жоқ: {list}. Бұл бөлмелердің тұрғындары кабинетте еске салғышты көреді.',debtors:'Қарыздарлар ({n})',
+th_res:'Тұрғын',th_room:'Бөлме',th_uni:'Университет',th_debt:'Қарыз',remindWA:'WhatsApp арқылы еске салу',noDebts:'Қарыз жоқ',remindText:'Сәлеметсіз бе, {n}! Жатақхана ақысын төлеуді еске саламыз ({r}-бөлме): {s}. Шоттар мен төлем — Жатақ жеке кабинетінде.',
+noReqs:'Жаңа өтінімдер жоқ',noReqsText:'Студент сайттан орын таңдағанда, өтінім осында пайда болады.',reqLine:'{r}-бөлме, {bed}, кіру {d}',waits:'Шешім күтуде',phoneVerified:'Телефон (расталған)',parents:'Ата-ана',uniCourse:'Университет, курс',approve:'Қоныстануды растау',reject:'Қабылдамау',
+rentFor:'{m}: жалдау ақысы',rentForText:'Әр тұрғын өз орнының бағасы бойынша шот алады.',issueRent:'Жалдау шотын шығару',allBills:'Барлық шоттар',th_bill:'Шот',th_issued:'Шығарылды',th_paidN:'Төлегендер',th_got:'Түсті',th_exp:'Күтілуде',allRes:'(барлық тұрғындар)',roomN:'{r}-бөлме',ofN:'{a} / {b}',
+tariffsH:'Тарифтер: {d}',tariffsNote:'Жаңа тарифтер келесі шоттарға қолданылады. Шығарылған шоттар өзгермейді.',perKwh:'1 кВт·сағ үшін ₸',perM3:'1 м³ үшін ₸',perRoom:'бір бөлмеге айына ₸',perPerson:'бір адамға айына ₸',perMonth:'айына ₸',rentLowerT:'Жалдау, төменгі орын',rentUpperT:'Жалдау, жоғарғы орын',rentBed:'Орын жалдау',saveTariffs:'Тарифтерді сақтау',tariffsSaved:'Тарифтер сақталды',numsNeeded:'Мәндерді тексеріңіз — сандар қажет',
+impH:'Тұрғындар кестесін жүктеңіз',impText:'Кестені қазір қалай жүргізсеңіз, солай жүктей беріңіз: Excel немесе CSV. «Аты-жөні» және «телефон» бағандары қажет; бөлме нөмірі, университет, «жоғарғы/төменгі орын» және ата-ана байланысы болса, олар да алынады. Бөлме нөмірі топтың бірінші жолында ғана көрсетілсе, қалған тұрғындар да сол бөлмеге жазылады. Тақырыптар қазақ, орыс немесе ағылшын тілінде болуы мүмкін.',chooseFile:'.xlsx немесе .csv файлын таңдау',gsheets:'Google Кестелерден: Файл, Жүктеп алу, Microsoft Excel',trySample:'Үлгі кестемен көріп шығу',reading:'Кесте оқылуда…',xlsxLoadErr:'Excel оқу модулі жүктелмеді. Интернетті тексеріп, қайталап көріңіз.',noFio:'«Аты-жөні» бағаны бар парақ табылмады. Тұрғындар тізімінің үстіне «Аты-жөні» тақырыбын қосыңыз.',badFile:'Файл оқылмайды. Оны .xlsx немесе .csv ретінде сақтап, қайталап көріңіз.',
+checkH:'Жүктер алдында тексеріңіз',checkText:'Табылған жолдар: {n}{sheet}. Қосылатын тұрғындар: {ok}.',onSheet:' («{s}» парағы)',newRoomsWill:' Жаңа бөлмелер құрылады: {l}.',th_rm:'Бөлме',th_name:'Аты-жөні',th_bed:'Орын',noPhone:'жоқ',s_ok:'Қосылады',s_new:'Жаңа бөлме',s_dup:'Жүйеде бар',s_noroom:'Бөлме көрсетілмеген',s_full:'Бос орын жоқ',noPhoneNote:'Телефоны жоқ тұрғындар қосылады, бірақ нөмір енгізілмейінше кабинетке кіре алмайды.',sendWA:'Тұрғындарға WhatsApp арқылы шақыру жіберу',addN:'Тұрғындарды қосу: {n}',addedN:'Қосылған тұрғындар: {n}',invSentN:', жіберілген шақырулар: {n}',sampleSheet:'Үлгі',
+tabDorms:'Жатақханалар',tabApps:'Иелердің өтінімдері',tabInv:'Шақырулар',appNew:'Жаңа',appFrom:'{c}, {p}. Өтінім күні: {d}',ownerL:'Иесі',appApprove:'Мақұлдап, шақыру жіберу',noApps:'Жаңа өтінімдер жоқ',noAppsText:'Иесі кабинеттегі «Қосылуға өтінім» формасын толтырғанда өтінімдер осында келеді.',inviteOwner:'Иесін шақыру',ownerName:'Иесінің аты',ownerPhone:'Иесінің телефоны',createInv:'Шақыру жасау',fillAll:'Барлық өрістерді толтырыңыз.',sentInv:'Жіберілген шақырулар',link:'Сілтеме',connected:'Қосылды',send:'Жіберу',openAsOwner:'Иесі ретінде ашу',invMsg:'Сәлеметсіз бе, {n}! «{d}» жатақханасын Жатаққа қосуға шақырамыз: {l}',
+dormsN:'Жатақханалар',ownersN:'Иелер',studentsN:'Тұратын студенттер',allDormsH:'Барлық жатақханалар',th_dorm:'Жатақхана',th_city:'Қала',th_owner:'Иесі',th_occ:'Бос емес',rowHint:'Жатақхана иесінің кабинетін ашу үшін жолды басыңыз.',platTitle:'Жатақ платформасы',platText:'Мұнда жаңа иелерді қосасыз және жүйедегі барлық жатақханаларды көресіз.',invCreated:'Шақыру жасалды: {l}',rejectAppQ:'Өтінімді қабылдамау керек пе?',
+roomH:'{r}-бөлме',roomSub:'{f}-қабат, тұрады: {a} / {t}',metersH:'Есептегіш көрсеткіштері',submittedBy:'Берген: {n}',byAdmin:'Әкімші енгізген',noReadings:'Әзірге көрсеткіштер жоқ. Алғашқысын тұрғындардың бірі береді.',residents:'Тұрғындар',debtAmt:'Қарыз {s}',cabinet:'Кабинет',notSignedIn:'әлі кірмеген',activeAcc:'белсенді',notGiven:'көрсетілмеген',markPaid:'Төлемді белгілеу',evict:'Шығарып, орынды босату',evictQ:'{n} шығарылсын ба? Орын босайды, төлем тарихы сақталады.',moved:'Орын босатылды',notPaid:'Төленбеген',movedOut:'Шығарылды',cash:'қолма-қол',
+bookSub:'айына {p}, коммуналдық төлем есептегіштер бойынша бөлек',fio:'Аты-жөні',fioPh:'Тегі Аты',university:'Университет',other:'Басқа',uniName:'Университет атауы',course:'Курс',bookBtn:'Нөмірді растап, орынды алу',bkErrName:'Тегі мен атыңызды көрсетіңіз.',bkErrUni:'Университетті көрсетіңіз.',bkErrDup:'Бұл нөмір тіркелген. Басты беттен кабинетке кіріңіз.',bedTaken:'Бұл орынды жаңа ғана біреу алды. Басқасын таңдаңыз',reqSent:'Өтінім иесіне жіберілді',reqCancelled:'Өтінім болдырылмады, орын босатылды',
+payH:'Төлем',nBills:'Шоттар: {n}',payDemo:'Демо: нақты нұсқада мұнда Kaspi Pay немесе картамен төлеу ашылады, банк растағаннан кейін шот автоматты түрде төленді деп белгіленеді.',payKaspi:'Kaspi арқылы төлеу',payCard:'Картамен төлеу',card:'карта',paidSum:'{s} төленді',signInH:'Кабинетке кіру',phoneNotFound:'Бұл нөмір табылмады. Жатақхана мен бос орынды таңдаңыз',checkReadings:'Көрсеткіштерді тексеріңіз',readingsBilled:'Көрсеткіштер қабылданды, шот тұрғындарға шығарылды: {n}',firstSaved:'Бастапқы көрсеткіштер сақталды',paymentMarked:'Төлем белгіленді',approved:'{n}: қоныстану расталды',rejectQ:'Өтінімді қабылдамай, орынды босату керек пе?',rejected:'Өтінім қабылданбады',reinvSent:'Шақыру қайта жіберілді: {n}',rentExists:'Бұл айдың жалдау шоты шығарылған',rentIssued:'Жалдау шоттары тұрғындарға шығарылды: {n}',
+months:['қаңтар','ақпан','наурыз','сәуір','мамыр','маусым','шілде','тамыз','қыркүйек','қазан','қараша','желтоқсан']
+},
+en:{
+brand:'Zhatak',roleStudent:'Student',roleOwner:'Owner',rolePlatform:'Platform',dormsOnline:'Dormitories online',platformPanel:'Platform panel',
+footer:'Demo: data is stored only in this browser.',resetDemo:'Reset demo data',resetConfirm:'Reset all demo data?',resetDone:'Demo data reset',saveFail:'Could not save: browser storage is full',close:'Close',
+bed_lower:'lower',bed_upper:'upper',placeTyped:'{type} bed',bedTypedN:'{type} bed {n}',bedN:'bed {n}',
+u_kwh:'kWh',u_m3:'m³',u_mon:'mo',u_ppl:'ppl',
+m_elec:'Electricity',m_hot:'Hot water',m_cold:'Cold water',
+l_elec:'Electricity',l_hot:'Hot water',l_cold:'Cold water',l_sewage:'Sewage (hot and cold water)',l_internet:'Internet',l_vdgo:'Gas equipment maintenance',l_maint:'Building maintenance',l_garbage:'Waste collection',l_commonElec:'Common-area electricity',l_rentT:'Accommodation ({type} bed)',l_rent1:'Accommodation',
+utilTitle:'Utilities {a}–{b}',rentTitle:'Accommodation, {m}',
+th_service:'Service',th_qty:'Qty',th_price:'Price',th_sum:'Amount',roomTotal:'Room total',shareEach:'Each share: {t} ÷ {n}',
+otpSent:'Code sent to {p}',otpDemo:'Demo: in production the code arrives by SMS or WhatsApp. Your code is',otpField:'Code from the message',confirm:'Confirm',resend:'Send the code again',otpBad:'Wrong code. Attempts left: {n}',otpMany:'Too many attempts. Request a new code',newCode:'New code',
+floorN:'Floor {n}',freeN:'{n} free',freeOf:'{n} of {t} free',noBeds:'full',st_free:'Free',st_occ:'Taken',st_req:'Request',st_mine:'Your bed',st_debt:'Has debt',bedAria:'Bed {n}: {s}',noRooms:'No rooms yet.',
+lg_freeClick:'Free — tap to take it',lg_occ:'Taken',lg_pend:'Awaiting confirmation',lg_free:'Free',lg_paid:'Living here, no debt',lg_debt:'Has debt',lg_req:'Request',lg_bunk:'Top square is the upper bed, bottom is the lower bed',
+allDorms:'All dormitories',dormIntroBunk:'{city}, {addr}. Lower bed {lo}, upper bed {up} per month. Utilities are metered and split among roommates.',dormIntroOne:'{city}, {addr}. {lo} per month. Utilities are metered and split among roommates.',
+heroTitle:'A dorm bed without phone calls',heroText:'Pick a dormitory and a free bed on the plan. Once you move in, rent and utility bills arrive in your account and you can pay them online.',alreadyLive:'Already living in a dorm?',phone:'Phone number',getCode:'Get a sign-in code',forDemo:'For the demo:',freeOfShort:'{n} of {t} free',fromPrice:'from {p}/month',chooseBed:'Choose a bed',full:'Full',
+cabTitle:'{name}, room {r}',uniUnknown:'university not specified',courseN:'year {n}',logout:'Sign out',pendPill:'Request under review',pendText:'{bed} in room {r} is held for you until the owner decides. The answer will come to {p}.',pendText2:'Move-in: {d}. Rent: {p} per month.',cancelReq:'Cancel request',
+tabBills:'Bills',tabMeters:'Meter readings',tabProfile:'Room and profile',toPay:'To pay',noDebt:'Nothing owed',payAll:'Pay all',paidOn:'Paid {d}',issuedOn:'Issued {d}',billDetails:'bill details',paid:'Paid',pay:'Pay',unpaid:'Unpaid',history:'Payment history',noBills:'No bills yet.',
+meterDue:'Time to submit meter readings for room {r}: the last ones were on {d}.',meterFirst:'Submit the first meter readings for room {r} — billing starts from them.',snapMeters:'Photograph the meters',sent:'Readings submitted',sentText:'Readings for room {r} were submitted on {d}{by}.',byYou:' by you',byName:' by {n}',nextAfter:'Next ones after {d}.',
+meterIntro:'Photograph the three meters in room {r}. The system reads the numbers, calculates the bill and splits it among all roommates ({n}).',meterIntroFirst:'These are the first readings for room {r}: they become the starting point, and no bill is issued for them.',oneEnough:'One person per room is enough.',noOcr:'Automatic recognition isn’t available in this window — attach the photo and type the numbers. The owner will see the photo.',
+prevReading:'Previous reading, {d}, {u}',snap:'Take a photo',resnap:'Retake',meterPhoto:'Meter photo',curReading:'Current reading',moreThan:'more than {v}',egReading:'e.g. 6844.5',less:'Lower than the previous reading — check the digits',usage:'Usage: {v} {u}',tooMuch:' — unusually high, please check',billH:'Bill',enterAll:'Enter all three readings — the bill is calculated automatically.',enterAllFirst:'Enter all three readings and submit them as the starting point.',sendFirst:'Submit starting readings',billFor:'Bill for {a}–{b} ({n} days)',sendAndBill:'Submit readings and issue the bill',eachGets:'Each roommate pays {p}',
+roommates:'Roommates in room {r}',you:' (you)',myData:'My details',parentPhone:'Parent’s phone',dorm:'Dormitory',checkIn:'Move-in date',
+photoOpenErr:'Couldn’t open the photo. Try JPEG or PNG.',photoAttached:'Photo attached. Type the digits from the photo below.',recognizing:'Reading the meter…',recLow:'Read {v}, but not sure{n}. Compare with the photo.',recOk:'Read: {v} {u}. Check it matches the photo.',recFail:'The digits aren’t readable. Retake closer or type them in.',recDenied:'Recognition wasn’t allowed — type the digits in.',recRate:'Too many requests. Wait a minute or type the digits in.',recErr:'Couldn’t read it. Type the digits from the photo.',
+ownerCab:'Dormitory owner account',ownerCabText:'Student requests, payments, debts and meter readings for all your dormitories in one place.',ownerLoginH:'Owner sign-in',nDorms:'{n} dormitories',howConnect:'How to connect your dormitory',
+step1h:'Request or invitation',step1:'Leave a request below, or open the invitation link if we sent you one.',step2h:'Confirm your number',step2:'Sign in with an SMS code, no passwords.',step3h:'Building and rates',step3:'Floors, rooms, beds, bed prices and utility rates.',step4h:'Resident list',step4:'Upload your Excel sheet — residents get a WhatsApp invitation.',
+applyH:'Request to connect',yourName:'Your name',phoneShort:'Phone',dormName:'Dormitory name',city:'City',placesApprox:'Approximate number of beds',sendReq:'Send request',apErr:'Fill in your name, dormitory name and city.',phoneErr:'Enter an 11-digit phone number, e.g. 8 707 123 45 67.',phone11:'Enter an 11-digit number',confirmPhone:'Confirm your number',
+reqSentPill:'Request sent',thanks:'Thank you, {n}',reqSentText:'We’ll review the request and send an invitation to {p} on WhatsApp. This usually takes one business day.',reqSentDemo:'In the demo, approve it under Platform, Owner requests.',
+inviteH:'Invitation to Zhatak',inviteText:'{n}, you’re invited to connect “{d}” ({c}). Confirm your number, then describe the building and rates — it takes about 10 minutes.',inviteCodeTo:'The code goes to {p}, the number in the invitation.',getCodeBtn:'Get code',notNow:'Not now',ownerNotFound:'No owner with this number. Leave a request to connect below',ownerSignIn:'Owner sign-in',
+newDorm:'New dormitory',wizText:'Describe the building. Rooms and beds are created automatically; you can add more when importing residents.',cancel:'Cancel',name:'Name',address:'Address',addrPh:'10 Abay St',floors:'Floors',perFloor:'Rooms per floor',bedsPerRoom:'Beds per room',bunks:'Bunk beds (upper and lower beds)',rentLowerW:'Rent, lower or regular bed, ₸ per month',rentUpperW:'Rent, upper bed, ₸ per month',tariffsDefault:'Utility rates are prefilled with typical values — change them on the Rates tab.',createDorm:'Create dormitory',wizSum:'{r} rooms and {b} beds. Room numbers: {list}.',wzErrName:'Enter the name and city.',wzErrSize:'Floors 1–40, rooms per floor 1–60.',wzErrRent:'Enter the rent.',dormCreated:'Dormitory created. Upload your resident list',
+dormSub:'{city}, {addr}. {r} rooms, {b} beds.',addDorm:'Add dormitory',tabOverview:'Overview',tabRooms:'Rooms',tabRequests:'Requests',tabImport:'Import residents',tabTariffs:'Rates',
+occBeds:'Beds taken',gotIn:'Received in {m}',resDebt:'Residents’ debt',newReqs:'New requests',notJoined:'Imported residents who haven’t signed in yet: {n}.',resendInv:'Resend the invitation',lateMeters:'No meter readings for over a month: {list}. Residents of these rooms see a reminder.',debtors:'Debtors ({n})',
+th_res:'Resident',th_room:'Room',th_uni:'University',th_debt:'Debt',remindWA:'Remind on WhatsApp',noDebts:'No debts',remindText:'Hello {n}! A reminder to pay for the dormitory (room {r}): {s}. Bills and payment are in your Zhatak account.',
+noReqs:'No new requests',noReqsText:'When a student picks a bed on the site, the request appears here.',reqLine:'Room {r}, {bed}, move-in {d}',waits:'Awaiting decision',phoneVerified:'Phone (verified)',parents:'Parents',uniCourse:'University, year',approve:'Confirm move-in',reject:'Decline',
+rentFor:'Rent for {m}',rentForText:'Each resident is billed at their bed price.',issueRent:'Issue rent',allBills:'All bills',th_bill:'Bill',th_issued:'Issued',th_paidN:'Paid',th_got:'Received',th_exp:'Outstanding',allRes:'(all residents)',roomN:'room {r}',ofN:'{a} of {b}',
+tariffsH:'Rates: {d}',tariffsNote:'New rates apply to future bills. Issued bills don’t change.',perKwh:'₸ per kWh',perM3:'₸ per m³',perRoom:'₸ per room per month',perPerson:'₸ per person per month',perMonth:'₸ per month',rentLowerT:'Rent, lower bed',rentUpperT:'Rent, upper bed',rentBed:'Bed rent',saveTariffs:'Save rates',tariffsSaved:'Rates saved',numsNeeded:'Check the values — numbers only',
+impH:'Upload your resident sheet',impText:'Use your sheet as you keep it now: Excel or CSV. It needs Full name and Phone columns; room number, university, upper/lower bed and parent contacts are picked up if present. If a room number appears only on the first row of a group, the rows below go to the same room. Headers can be in Kazakh, Russian or English.',chooseFile:'Choose an .xlsx or .csv file',gsheets:'From Google Sheets: File, Download, Microsoft Excel',trySample:'Try with a sample sheet',reading:'Reading the sheet…',xlsxLoadErr:'Couldn’t load the Excel reader. Check your connection and try again.',noFio:'No sheet has a Full name column. Add a “Full name” header above the resident list.',badFile:'The file can’t be read. Save it as .xlsx or .csv and try again.',
+checkH:'Check before importing',checkText:'{n} rows found{sheet}. Residents to add: {ok}.',onSheet:' (sheet “{s}”)',newRoomsWill:' New rooms will be created: {l}.',th_rm:'Room',th_name:'Full name',th_bed:'Bed',noPhone:'none',s_ok:'Will be added',s_new:'New room',s_dup:'Already in system',s_noroom:'No room given',s_full:'No free bed',noPhoneNote:'Residents without a phone are added but can’t sign in until you add a number.',sendWA:'Send residents a WhatsApp invitation',addN:'Add {n} residents',addedN:'Residents added: {n}',invSentN:', invitations sent: {n}',sampleSheet:'Sample',
+tabDorms:'Dormitories',tabApps:'Owner requests',tabInv:'Invitations',appNew:'New',appFrom:'{c}, {p}. Requested {d}',ownerL:'Owner',appApprove:'Approve and send invitation',noApps:'No new requests',noAppsText:'Requests appear when an owner fills in “Request to connect” in the owner area.',inviteOwner:'Invite an owner',ownerName:'Owner’s name',ownerPhone:'Owner’s phone',createInv:'Create invitation',fillAll:'Fill in all fields.',sentInv:'Sent invitations',link:'Link',connected:'Connected',send:'Send',openAsOwner:'Open as owner',invMsg:'Hello {n}! You’re invited to connect “{d}” to Zhatak: {l}',
+dormsN:'Dormitories',ownersN:'Owners',studentsN:'Students living',allDormsH:'All dormitories',th_dorm:'Dormitory',th_city:'City',th_owner:'Owner',th_occ:'Taken',rowHint:'Click a row to open that dormitory’s owner account.',platTitle:'Zhatak platform',platText:'Connect new owners and see every dormitory in the system.',invCreated:'Invitation created: {l}',rejectAppQ:'Decline this request?',
+roomH:'Room {r}',roomSub:'Floor {f}, {a} of {t} occupied',metersH:'Meter readings',submittedBy:'Submitted by {n}',byAdmin:'Entered by the administrator',noReadings:'No readings yet. A resident will submit the first ones.',residents:'Residents',debtAmt:'Debt {s}',cabinet:'Account',notSignedIn:'not signed in yet',activeAcc:'active',notGiven:'not given',markPaid:'Mark as paid',evict:'Move out and free the bed',evictQ:'Move out {n}? The bed becomes free; payment history is kept.',moved:'Bed freed',notPaid:'Not paid',movedOut:'Moved out',cash:'cash',
+bookSub:'{p} per month plus metered utilities',fio:'Full name',fioPh:'Surname Name',university:'University',other:'Other',uniName:'University name',course:'Year',bookBtn:'Confirm number and take the bed',bkErrName:'Enter your surname and name.',bkErrUni:'Enter your university.',bkErrDup:'This number is already registered. Sign in from the main page.',bedTaken:'Someone just took this bed. Pick another one',reqSent:'Request sent to the owner',reqCancelled:'Request cancelled, bed freed',
+payH:'Payment',nBills:'{n} bills',payDemo:'Demo: in production this opens Kaspi Pay or card payment, and the bill is marked paid automatically once the bank confirms.',payKaspi:'Pay with Kaspi',payCard:'Pay by card',card:'card',paidSum:'Paid {s}',signInH:'Sign in',phoneNotFound:'Number not found. Choose a dormitory and a free bed',checkReadings:'Check the readings',readingsBilled:'Readings accepted, bill issued to {n} residents',firstSaved:'Starting readings saved',paymentMarked:'Payment marked',approved:'{n}: move-in confirmed',rejectQ:'Decline the request and free the bed?',rejected:'Request declined',reinvSent:'Invitation resent: {n}',rentExists:'Rent for this month is already issued',rentIssued:'Rent bills issued to {n} residents',
+months:['January','February','March','April','May','June','July','August','September','October','November','December']
+}};
+const LOCALES={ru:'ru-RU',kk:'kk-KZ',en:'en-US'};
+const LANG_NAMES={kk:'ҚАЗ',ru:'РУС',en:'ENG'};
+function t(k,p){const s=(I18N[ui.lang]&&I18N[ui.lang][k])??I18N.ru[k]??k;return p?String(s).replace(/\{(\w+)\}/g,(m,x)=>p[x]??''):s}
+
+/* ================= constants ================= */
+const LS='zhatak-demo-v5';
+const todayISO=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const UNIS=['АГУ','МУИТ','АКЖТ','КазНУ им. аль-Фараби','Туран','КазНИТУ'];
+const METERS={elec:{unit:'u_kwh',dec:1},hot:{unit:'u_m3',dec:3},cold:{unit:'u_m3',dec:3}};
+const DEF_T={elec:56.89,hot:709.63,cold:206,sewage:2000,internet:500,vdgo:1000,maint:3000,garbage:781,commonElec:500,rentLower:45000,rentUpper:40000};
+
+/* ================= pure helpers ================= */
+function rng(s){return()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nf=(n,o)=>Number(n).toLocaleString(LOCALES[ui.lang]||'ru-RU',o);
+const money=n=>nf(Math.round(n))+' ₸';
+const fmtD=d=>d?d.slice(8,10)+'.'+d.slice(5,7)+'.'+d.slice(0,4):'';
+const days=(a,b)=>Math.round((new Date(b)-new Date(a))/864e5);
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x.toISOString().slice(0,10)};
+const num=v=>{const x=parseFloat(String(v??'').replace(/\s/g,'').replace(',','.'));return isFinite(x)?x:null};
+const decStr=v=>ui.lang==='en'?String(v):String(v).replace('.',',');
+const digits=p=>String(p||'').replace(/\D/g,'').slice(-10);
+const normPhone=p=>{const d=digits(p);return d.length===10?'8'+d:''};
+const fmtPhone=p=>{const d=digits(p);return d.length===10?`8 ${d.slice(0,3)} ${d.slice(3,6)} ${d.slice(6,8)} ${d.slice(8)}`:String(p||'')};
+const waNum=p=>'7'+digits(p);
+const cap=s=>s?s[0].toUpperCase()+s.slice(1):s;
+const nextMonth=m=>{const [y,mm]=m.split('-').map(Number);return mm===12?`${y+1}-01`:`${y}-${String(mm+1).padStart(2,'0')}`};
+const monthName=m=>t('months')[+m.slice(5)-1]+' '+m.slice(0,4);
+const firstName=n=>n.split(' ')[1]||n;
+
+function makeRooms(dId,floors,perFloor,beds,bunks){const rooms=[];for(let f=1;f<=floors;f++)for(let n=1;n<=perFloor;n++)rooms.push(makeRoom(dId,String(f*100+n),beds,bunks));return rooms}
+function makeRoom(dId,id,beds,bunks){const b=[];for(let i=1;i<=beds;i++)b.push({id:`${dId}:${id}-${i}`,n:i,type:bunks?(i%2?'lower':'upper'):'single'});return{id,floor:Math.max(1,Math.floor(+id/100)),beds:b}}
+function calcUtility(prev,curr,n,T){
+  const d=Math.max(1,days(prev.date,curr.date)),f=Math.min(1,d/30),ff=+f.toFixed(2);
+  const de=Math.max(0,+(curr.elec-prev.elec).toFixed(1)),dh=Math.max(0,+(curr.hot-prev.hot).toFixed(3)),dc=Math.max(0,+(curr.cold-prev.cold).toFixed(3));
+  const L=[['l_elec',de,'u_kwh',T.elec,de*T.elec],['l_hot',dh,'u_m3',T.hot,dh*T.hot],['l_cold',dc,'u_m3',T.cold,dc*T.cold],['l_sewage',ff,'u_mon',T.sewage,T.sewage*f],['l_internet',n,'u_ppl',T.internet,T.internet*n*f],
+    ['l_vdgo',ff,'u_mon',T.vdgo,T.vdgo*f],['l_maint',ff,'u_mon',T.maint,T.maint*f],['l_garbage',n,'u_ppl',T.garbage,T.garbage*n*f],['l_commonElec',ff,'u_mon',T.commonElec,T.commonElec*f]];
+  const total=L.reduce((s,l)=>s+l[4],0);return{lines:L,total,days:d,f,per:n?Math.ceil(total/n):0};
+}
+const rentLine=(type,amt)=>['l_rent',1,'u_mon',amt,amt,type];
+const lineLabel=l=>l[0]==='l_rent'?(l[5]&&l[5]!=='single'?t('l_rentT',{type:t('bed_'+l[5])}):t('l_rent1')):t(l[0]);
+const billTitle=b=>b.type==='rent'?t('rentTitle',{m:monthName(b.month)}):t('utilTitle',{a:fmtD(b.period[0]).slice(0,5),b:fmtD(b.period[1]).slice(0,5)});
+const bedText=b=>b.type==='single'?t('bedN',{n:b.n}):t('bedTypedN',{type:t('bed_'+b.type),n:b.n});
+
+/* ================= seed ================= */
+function seed(){
+  const R=rng(2026),pick=a=>a[Math.floor(R()*a.length)];
+  const phone=()=>'8'+pick(['707','747','777','705','778','701','702'])+String(Math.floor(R()*1e7)).padStart(7,'0');
+  const mF=['Нурлан','Ерлан','Азамат','Дамир','Алихан','Арман','Санжар','Мади','Темирлан','Ернур','Бекзат','Данияр','Асет','Жандос','Нурсултан','Алишер'];
+  const L=['Турсынбеков','Ахметов','Серикбаев','Жумабеков','Касымов','Оспанов','Нурланов','Бекмуханов','Абдрахманов','Сейтказин','Кенжебаев','Мукашев','Исмаилов','Болатов'];
+  const fF=['Айгерим','Аружан','Дана','Камила','Мадина','Жансая','Томирис','Аяулым','Асель','Динара','Альбина','Айша','Сабина','Дильназ'];
+  const S={dorms:[],owners:[],residents:[],bills:[],invites:[],applications:[],seq:1};const id=()=>'i'+(S.seq++);
+  S.owners.push({id:'o1',name:'Серик Ахметов',phone:'87011234567'});
+  const defs=[{id:'d1',name:'Молдабекова',city:'Алматы',address:'Молдабекова, 12',floors:2,per:6,beds:8,occ:.76,g:(f)=>f===1?'m':'f'},{id:'d2',name:'Сатпаева',city:'Алматы',address:'Сатпаева, 30',floors:3,per:4,beds:4,occ:.7,g:(f,n)=>n%2?'m':'f'}];
+  const person=g=>{let last=pick(L);if(g==='f')last+='а';return last+' '+(g==='m'?pick(mF):pick(fF))};
+  for(const df of defs){
+    const d={id:df.id,name:df.name,city:df.city,address:df.address,ownerId:'o1',bedsPerRoom:df.beds,bunks:true,tariffs:{...DEF_T},rooms:makeRooms(df.id,df.floors,df.per,df.beds,true),readings:{},rentMonths:[],status:'active',created:'2026-07-01'};
+    if(df.id==='d2'){d.tariffs.rentLower=55000;d.tariffs.rentUpper=50000}
+    S.dorms.push(d);
+    for(const room of d.rooms){
+      const g=df.g(room.floor,+room.id%100);
+      for(const bed of room.beds)if(R()<df.occ)S.residents.push({id:id(),dormId:d.id,name:person(g),phone:phone(),uni:pick(UNIS),course:1+Math.floor(R()*4),parentPhone:phone(),roomId:room.id,bedId:bed.id,checkIn:'2026-07-'+String(20+Math.floor(R()*10)).padStart(2,'0'),status:'active'});
+      const e=+(6000+R()*1500).toFixed(1),h=+(60+R()*20).toFixed(3),c=+(90+R()*25).toFixed(3),k=room.beds.length/8;
+      const r0={date:'2026-08-01',elec:e,hot:h,cold:c,by:null,photos:{}},r1={date:'2026-09-01',elec:+(e+(140+R()*190)*k).toFixed(1),hot:+(h+(5+R()*6)*k).toFixed(3),cold:+(c+(9+R()*8)*k).toFixed(3),by:null,photos:{}};
+      d.readings[room.id]=[r0,r1];
+      const res=S.residents.filter(r=>r.dormId===d.id&&r.roomId===room.id);
+      if(res.length){const calc=calcUtility(r0,r1,res.length,d.tariffs);S.bills.push({id:id(),dormId:d.id,type:'util',roomId:room.id,period:[r0.date,r1.date],lines:calc.lines,total:calc.total,created:'2026-09-02',shares:res.map(r=>{const p=R()<0.78;return{rid:r.id,amount:calc.per,paid:p,paidAt:p?'2026-09-0'+(3+Math.floor(R()*6)):null}})})}
+    }
+    for(const [m,prob] of [['2026-09',0.93],['2026-10',0.5]]){d.rentMonths.push(m);
+      for(const r of S.residents.filter(x=>x.dormId===d.id)){const b=d.rooms.find(x=>x.id===r.roomId).beds.find(x=>x.id===r.bedId),amt=b.type==='upper'?d.tariffs.rentUpper:d.tariffs.rentLower,p=R()<prob;
+        S.bills.push({id:id(),dormId:d.id,type:'rent',roomId:r.roomId,month:m,lines:[rentLine(b.type,amt)],total:amt,created:m+'-01',shares:[{rid:r.id,amount:amt,paid:p,paidAt:p?m+'-0'+(1+Math.floor(R()*4)):null}]})}}
+    let k=0;for(const room of d.rooms)for(const bed of room.beds)if(k<2&&!S.residents.some(r=>r.bedId===bed.id)&&R()<0.4){S.residents.push({id:id(),dormId:d.id,name:person(df.g(room.floor,+room.id%100)),phone:phone(),uni:pick(UNIS),course:1,parentPhone:phone(),roomId:room.id,bedId:bed.id,checkIn:'2026-10-10',status:'pending',created:'2026-10-04'});k++}
+  }
+  S.invites.push({code:'K7Q2MX',ownerName:'Гульнара Касымова',phone:'87779876543',dormName:'Абая',city:'Алматы',created:'2026-10-03',status:'sent'});
+  S.applications.push({id:'a1',name:'Ерболат Жумабеков',phone:'87075553311',dormName:'Достык',city:'Астана',places:'60',created:'2026-10-04',status:'new'});
+  return S;
+}
+
+/* ================= state ================= */
+const ui=(()=>{try{return JSON.parse(localStorage.getItem(LS+'-ui'))}catch(e){return null}})()||{role:'student',sid:null,oid:null,dormId:null,stab:'bills',otab:'overview',atab:'dorms',inviteCode:null,wizard:null,lang:null};
+if(!ui.lang){const n=(navigator.language||'ru').toLowerCase();ui.lang=n.startsWith('kk')?'kk':n.startsWith('en')?'en':'ru'}
+let S;
+function load(){try{const s=localStorage.getItem(LS);return s?JSON.parse(s):null}catch(e){return null}}
+function save(){try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){toast(t('saveFail'))}}
+S=load()||seed();save();
+function saveUi(){try{localStorage.setItem(LS+'-ui',JSON.stringify(ui))}catch(e){}}
+let meter={elec:{},hot:{},cold:{}},otp=null,importPlan=null,sampleFn=null,canImg=false;
+
+/* ================= model helpers ================= */
+const dorm=id=>S.dorms.find(d=>d.id===id);
+const D=()=>dorm(ui.dormId);
+const roomOf=(d,rid)=>d.rooms.find(r=>r.id===rid);
+const res=id=>S.residents.find(r=>r.id===id);
+const bedOf=r=>roomOf(dorm(r.dormId),r.roomId).beds.find(b=>b.id===r.bedId);
+const occupant=bid=>S.residents.find(x=>x.bedId===bid&&x.status!=='left');
+const active=(dId,rid)=>S.residents.filter(r=>r.dormId===dId&&r.roomId===rid&&r.status==='active');
+const lastReading=(d,rid)=>{const a=d.readings[rid]||[];return a[a.length-1]};
+const sharesOf=rid=>S.bills.flatMap(b=>b.shares.filter(s=>s.rid===rid).map(s=>({bill:b,share:s})));
+const debtOf=rid=>sharesOf(rid).filter(x=>!x.share.paid).reduce((s,x)=>s+x.share.amount,0);
+const priceOf=(d,b)=>b.type==='upper'?d.tariffs.rentUpper:d.tariffs.rentLower;
+const freeCount=d=>d.rooms.reduce((s,r)=>s+r.beds.filter(b=>!occupant(b.id)).length,0);
+const bedCount=d=>d.rooms.reduce((s,r)=>s+r.beds.length,0);
+const ownerDorms=oid=>S.dorms.filter(d=>d.ownerId===oid);
+const findByPhone=(list,p)=>list.find(x=>digits(x.phone)===digits(p));
+
+/* ================= ui primitives ================= */
+function toast(s){const el=$('#toast');el.textContent=s;el.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('on'),2800)}
+function openModal(html){$('#sheet').innerHTML=html;$('#modal').hidden=false;const f=$('#sheet').querySelector('input,select,button.btn');f&&f.focus()}
+function closeModal(){$('#modal').hidden=true;$('#sheet').innerHTML=''}
+const sheetHead=(h,sub)=>`<div class="sheet-h"><div><h2>${h}</h2>${sub?`<p class="muted" style="margin-top:4px">${sub}</p>`:''}</div><button class="x" data-a="close" aria-label="${t('close')}">×</button></div>`;
+function odo(v,dec,sm){const s=Number(v).toFixed(dec);const [i,f]=s.split('.');return `<span class="odo${sm?' sm':''}" aria-label="${s}">`+[...i.padStart(5,'0')].map(x=>`<span>${x}</span>`).join('')+(f?[...f].map(x=>`<span class="fr">${x}</span>`).join(''):'')+'</span>'}
+function billTable(b,n){
+  const rows=b.lines.map(l=>`<tr><td>${esc(lineLabel(l))}</td><td class="num">${decStr(l[1])} ${t(l[2])}</td><td class="num">${nf(l[3],{maximumFractionDigits:2})}</td><td class="num">${nf(l[4],{minimumFractionDigits:2,maximumFractionDigits:2})}</td></tr>`).join('');
+  const split=n>1?`<tr class="total"><td colspan="3">${t('shareEach',{t:nf(Math.round(b.total)),n})}</td><td class="num">${money(Math.ceil(b.total/n))}</td></tr>`:'';
+  return `<div class="tbl-wrap"><table><thead><tr><th>${t('th_service')}</th><th class="num">${t('th_qty')}</th><th class="num">${t('th_price')}</th><th class="num">${t('th_sum')}</th></tr></thead><tbody>${rows}<tr class="total"><td colspan="3">${t('roomTotal')}</td><td class="num">${money(b.total)}</td></tr>${split}</tbody></table></div>`;
+}
+const fld=(id,label,attrs='')=>`<label class="fld">${label}<input id="${id}" ${attrs}></label>`;
+const showP=(label,val)=>`<p class="fld">${label}<br><span style="color:var(--ink)">${val}</span></p>`;
+
+/* ----- one-time code ----- */
+function otpStart(phone,title,onOk){
+  const code=String(1000+Math.floor(Math.random()*9000));otp={phone,code,onOk,tries:0,title};
+  openModal(sheetHead(title,t('otpSent',{p:fmtPhone(phone)}))+`<div class="stack"><div class="note">${t('otpDemo')} <b class="code">${code}</b></div>
+    <label class="fld">${t('otpField')}<input id="otp" class="otp-in" inputmode="numeric" maxlength="4" autocomplete="one-time-code"></label><p class="status err" id="otp-err"></p>
+    <div class="row"><button class="btn" data-a="otpCheck">${t('confirm')}</button><button class="link" data-a="otpResend">${t('resend')}</button></div></div>`);
+}
+function otpCheck(){
+  if(!otp)return;const v=$('#otp').value.trim();
+  if(v===otp.code){const cb=otp.onOk;otp=null;closeModal();cb();return}
+  otp.tries++;if(otp.tries>=5){otp=null;closeModal();toast(t('otpMany'));return}
+  $('#otp-err').textContent=t('otpBad',{n:5-otp.tries});
+}
+
+/* ================= render ================= */
+function render(){
+  document.documentElement.lang=ui.lang;document.title=t('brand')+' — '+t('dormsOnline');
+  $('#brand').textContent=t('brand');
+  $('#r-student').textContent=t('roleStudent');$('#r-owner').textContent=t('roleOwner');$('#r-admin').textContent=t('rolePlatform');
+  for(const r of ['student','owner','admin'])$('#r-'+r).setAttribute('aria-pressed',ui.role===r);
+  for(const l of ['kk','ru','en'])$('#l-'+l).setAttribute('aria-pressed',ui.lang===l);
+  $('#foot').innerHTML=`${t('footer')} <button class="link" data-a="reset">${t('resetDemo')}</button>`;
+  const d=D();$('#bname').textContent=ui.role==='admin'?t('platformPanel'):(d&&(ui.role!=='owner'||ui.oid)?d.name:t('dormsOnline'));
+  $('#app').innerHTML=ui.role==='owner'?ownerView():ui.role==='admin'?adminView():studentView();
+  saveUi();
+}
+
+function bedMap(d,mode){
+  const me=ui.sid&&res(ui.sid);let out='';
+  for(const f of [...new Set(d.rooms.map(r=>r.floor))].sort((a,b)=>a-b)){
+    const rooms=d.rooms.filter(r=>r.floor===f),free=rooms.reduce((s,r)=>s+r.beds.filter(b=>!occupant(b.id)).length,0);
+    out+=`<div class="floor"><h2>${t('floorN',{n:f})}</h2><span class="muted">${t('freeN',{n:free})}</span></div><div class="rooms">`;
+    for(const r of rooms){
+      const nfree=r.beds.filter(b=>!occupant(b.id)).length;
+      const btn=b=>{const o=occupant(b.id);let cls='occ',st=t('st_occ'),extra='';
+        if(!o){cls='free';st=t('st_free')+(b.type!=='single'?', '+t('bed_'+b.type):'');if(mode==='student')extra=`data-a="book" data-bed="${b.id}" data-room="${r.id}"`}
+        else if(o.status==='pending'){cls='pend';st=t('st_req')}else if(me&&o.id===me.id){cls='me';st=t('st_mine')}else if(mode==='owner'&&debtOf(o.id)>0){cls='debt';st=t('st_debt')}
+        return `<button class="bed ${cls}" ${extra} title="${st}" aria-label="${t('bedAria',{n:b.n,s:st})}" ${extra?'':'tabindex="-1"'}>${b.n}</button>`};
+      let inner='';
+      if(d.bunks){for(let i=0;i<r.beds.length;i+=2)inner+=`<div class="bunk">${r.beds[i+1]?btn(r.beds[i+1]):''}${btn(r.beds[i])}</div>`}else inner=r.beds.map(b=>`<div class="bunk">${btn(b)}</div>`).join('');
+      const cols=Math.min(4,d.bunks?Math.ceil(r.beds.length/2):r.beds.length);
+      out+=`<div class="room${mode==='owner'?' click':''}" ${mode==='owner'?`data-a="room" data-room="${r.id}" tabindex="0"`:''}><header><b>${r.id}</b><span>${nfree?t('freeOf',{n:nfree,t:r.beds.length}):t('noBeds')}</span></header><div class="bunks" style="grid-template-columns:repeat(${cols},1fr)">${inner}</div></div>`;
+    }
+    out+='</div>';
+  }
+  return out||`<div class="card muted">${t('noRooms')}</div>`;
+}
+function legend(d,mode){
+  const items=mode==='owner'?[['var(--free-bg)','lg_free'],['var(--occ-bg)','lg_paid'],['var(--debt-bg)','lg_debt'],['var(--pend-bg)','lg_req']]:[['var(--free-bg)','lg_freeClick'],['var(--occ-bg)','lg_occ'],['var(--pend-bg)','lg_pend']];
+  return `<div class="legend">${items.map(i=>`<span><i style="background:${i[0]}"></i>${t(i[1])}</span>`).join('')}${d.bunks?`<span>${t('lg_bunk')}</span>`:''}</div>`;
+}
+
+/* ================= student ================= */
+function studentView(){
+  const me=ui.sid&&res(ui.sid);
+  if(me&&me.status!=='left'){ui.dormId=me.dormId;return studentCabinet(me)}
+  if(ui.sid&&!me)ui.sid=null;
+  const d=D();
+  if(d&&d.status==='active')return `<button class="link back" data-a="toCatalog">${t('allDorms')}</button>
+    <section class="intro" style="padding-top:12px"><div><h1>${esc(d.name)}</h1><p>${d.bunks?t('dormIntroBunk',{city:esc(d.city),addr:esc(d.address),lo:money(d.tariffs.rentLower),up:money(d.tariffs.rentUpper)}):t('dormIntroOne',{city:esc(d.city),addr:esc(d.address),lo:money(d.tariffs.rentLower)})}</p></div></section>
+    ${legend(d,'student')}${bedMap(d,'student')}`;
+  return `<section class="intro"><div><h1>${t('heroTitle')}</h1><p>${t('heroText')}</p></div>
+    <div class="card"><h3>${t('alreadyLive')}</h3>${fld('loginPhone',t('phone'),'inputmode="tel" autocomplete="tel" placeholder="8 707 123 45 67"')}
+      <div class="row" style="margin-top:10px"><button class="btn" data-a="login">${t('getCode')}</button></div>
+      <p class="muted" style="font-size:13px;margin-top:10px">${t('forDemo')} ${S.residents.filter(r=>r.status==='active').filter((_,i)=>i%23===0).slice(0,3).map(r=>`<button class="link" data-a="fillPhone" data-p="${r.phone}">${esc(firstName(r.name))}</button>`).join(', ')}</p></div></section>
+    <div class="cat">${S.dorms.filter(x=>x.status==='active').map(x=>{const tot=bedCount(x),f=freeCount(x);return `<div class="dorm"><h3>${esc(x.name)}</h3><p class="muted" style="font-size:14px">${esc(x.city)}, ${esc(x.address)}</p>
+      <div class="bar" aria-label="${t('freeOfShort',{n:f,t:tot})}"><i style="width:${tot?f/tot*100:0}%"></i></div>
+      <div class="meta"><span>${t('freeOfShort',{n:f,t:tot})}</span><span>${t('fromPrice',{p:money(Math.min(x.tariffs.rentLower,x.bunks?x.tariffs.rentUpper:Infinity))})}</span></div>
+      <button class="btn" data-a="openDorm" data-id="${x.id}" ${f?'':'disabled'}>${f?t('chooseBed'):t('full')}</button></div>`}).join('')}</div>`;
+}
+function studentCabinet(me){
+  const d=dorm(me.dormId),b=bedOf(me);
+  const head=`<section class="intro" style="padding-bottom:0"><div><h1>${t('cabTitle',{name:esc(firstName(me.name)),r:me.roomId})}</h1>
+    <p>${esc(d.name)}. ${cap(bedText(b))}, ${esc(me.uni||t('uniUnknown'))}${me.course?', '+t('courseN',{n:me.course}):''}</p></div>
+    <div class="row" style="justify-content:flex-end"><button class="btn ghost sm" data-a="logout">${t('logout')}</button></div></section>`;
+  if(me.status==='pending')return head+`<div class="card stack" style="margin-top:18px"><span class="pill wait">${t('pendPill')}</span>
+    <p>${cap(t('pendText',{bed:bedText(b),r:me.roomId,p:fmtPhone(me.phone)}))}</p><p class="muted">${t('pendText2',{d:fmtD(me.checkIn),p:money(priceOf(d,b))})}</p>
+    <div><button class="btn danger sm" data-a="cancelBooking">${t('cancelReq')}</button></div></div>`;
+  const debt=debtOf(me.id);const tabs=[['bills','tabBills'],['meters','tabMeters'],['profile','tabProfile']];
+  const body=ui.stab==='meters'?studentMeters(me,d):ui.stab==='profile'?studentProfile(me,d):studentBills(me,d,debt);
+  return head+`<nav class="tabs" role="tablist">${tabs.map(x=>`<button role="tab" aria-selected="${ui.stab===x[0]}" data-a="stab" data-v="${x[0]}">${t(x[1])}${x[0]==='bills'&&debt>0?` <span class="badge" style="background:var(--debt-bg);color:var(--debt)">${money(debt)}</span>`:''}</button>`).join('')}</nav>`+body;
+}
+function studentBills(me,d,debt){
+  const all=sharesOf(me.id).sort((a,b)=>b.bill.created.localeCompare(a.bill.created)),unpaid=all.filter(x=>!x.share.paid),paid=all.filter(x=>x.share.paid);
+  const item=x=>`<div class="item"><div class="grow"><div class="t">${esc(billTitle(x.bill))}</div><div class="s">${x.share.paid?t('paidOn',{d:fmtD(x.share.paidAt)}):t('issuedOn',{d:fmtD(x.bill.created)})}, <button class="link" data-a="billInfo" data-b="${x.bill.id}">${t('billDetails')}</button></div></div>
+    <div class="amt">${money(x.share.amount)}</div>${x.share.paid?`<span class="pill ok">${t('paid')}</span>`:`<button class="btn sm" data-a="pay" data-b="${x.bill.id}">${t('pay')}</button>`}</div>`;
+  const lr=lastReading(d,me.roomId),due=!lr||days(lr.date,todayISO())>=25;
+  return `<div class="stack"><div class="card balance"><div><small class="muted">${debt>0?t('toPay'):t('noDebt')}</small><br><b style="color:${debt>0?'var(--debt)':'var(--free)'}">${money(debt)}</b></div>${unpaid.length>1?`<button class="btn" data-a="payAll">${t('payAll')}</button>`:''}</div>
+    ${due?`<div class="note">${lr?t('meterDue',{r:me.roomId,d:fmtD(lr.date)}):t('meterFirst',{r:me.roomId})} <button class="link" data-a="stab" data-v="meters">${t('snapMeters')}</button></div>`:''}
+    ${unpaid.length?`<div class="card"><h3>${t('unpaid')}</h3>${unpaid.map(item).join('')}</div>`:''}${paid.length?`<div class="card"><h3>${t('history')}</h3>${paid.map(item).join('')}</div>`:''}${!all.length?`<div class="card muted">${t('noBills')}</div>`:''}</div>`;
+}
+function studentMeters(me,d){
+  const lr=lastReading(d,me.roomId);
+  if(lr&&days(lr.date,todayISO())<25){const by=lr.by&&res(lr.by);
+    return `<div class="card stack"><span class="pill ok">${t('sent')}</span><p>${t('sentText',{r:me.roomId,d:fmtD(lr.date),by:by?(by.id===me.id?t('byYou'):t('byName',{n:esc(by.name)})):''})}</p><p class="muted">${t('nextAfter',{d:fmtD(addDays(lr.date,25))})}</p>
+      <div class="meters">${Object.entries(METERS).map(([k,m])=>`<div class="meter ${k}"><h3>${t('m_'+k)}</h3><div class="prev">${t(m.unit)}<br>${odo(lr[k],m.dec)}</div>${lr.photos&&lr.photos[k]?`<img class="thumb" src="${lr.photos[k]}" alt="${t('meterPhoto')}">`:''}</div>`).join('')}</div></div>`}
+  const n=active(d.id,me.roomId).length;
+  return `<div class="stack"><div class="note">${lr?t('meterIntro',{r:me.roomId,n}):t('meterIntroFirst',{r:me.roomId})} ${t('oneEnough')}</div>
+    ${!canImg?`<div class="note" style="background:var(--pend-bg)">${t('noOcr')}</div>`:''}
+    <div class="meters">${Object.entries(METERS).map(([k,m])=>`<div class="meter ${k}"><h3>${t('m_'+k)}</h3>
+      <div class="prev">${lr?`${t('prevReading',{d:fmtD(lr.date),u:t(m.unit)})}<br>${odo(lr[k],m.dec)}`:t(m.unit)}</div>
+      <label class="photo-btn"><input type="file" accept="image/*" capture="environment" data-photo="${k}" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg><span id="pb-${k}">${meter[k].photo?t('resnap'):t('snap')}</span></label>
+      <img class="thumb" id="th-${k}" ${meter[k].photo?`src="${meter[k].photo}"`:'hidden'} alt="${t('meterPhoto')}"><div class="status" id="st-${k}"></div>
+      <label class="fld">${t('curReading')}<input inputmode="decimal" data-mv="${k}" id="mv-${k}" value="${esc(meter[k].val??'')}" placeholder="${lr?t('moreThan',{v:decStr(lr[k])}):t('egReading')}"></label><div class="delta" id="dl-${k}"></div></div>`).join('')}</div>
+    <div class="card" id="preview"></div></div>`;
+}
+function studentProfile(me,d){
+  return `<div class="stack"><div class="card"><h3>${t('roommates',{r:me.roomId})}</h3>
+    ${active(d.id,me.roomId).map(m=>`<div class="item"><div class="grow"><div class="t">${esc(m.name)}${m.id===me.id?t('you'):''}</div><div class="s">${esc(m.uni||'')}${m.course?', '+t('courseN',{n:m.course}):''}</div></div><span class="muted">${bedText(bedOf(m))}</span></div>`).join('')}</div>
+    <div class="card"><h3>${t('myData')}</h3><div class="grid2">${showP(t('phoneShort'),fmtPhone(me.phone))}${showP(t('parentPhone'),esc(fmtPhone(me.parentPhone)||'—'))}${showP(t('dorm'),esc(d.name))}${showP(t('checkIn'),fmtD(me.checkIn)||'—')}</div></div></div>`;
+}
+function updatePreview(){
+  const me=ui.sid&&res(ui.sid),el=$('#preview');if(!me||!el)return;
+  const d=dorm(me.dormId),lr=lastReading(d,me.roomId);let ok=true;const cur={date:todayISO()};
+  for(const k in METERS){const v=num(meter[k].val),dl=$('#dl-'+k);if(v==null){ok=false;dl.textContent='';continue}
+    if(lr){const dd=+(v-lr[k]).toFixed(METERS[k].dec),avg={elec:250,hot:8,cold:14}[k]*(d.bedsPerRoom/8);
+      if(dd<0){ok=false;dl.innerHTML=`<span style="color:var(--debt)">${t('less')}</span>`}else dl.innerHTML=t('usage',{v:decStr(dd),u:t(METERS[k].unit)})+(dd>avg*3?` <span style="color:var(--pend)">${t('tooMuch')}</span>`:'')}
+    cur[k]=v}
+  if(!ok){el.innerHTML=`<h3>${t('billH')}</h3><p class="muted" style="margin-top:6px">${lr?t('enterAll'):t('enterAllFirst')}</p>`;return}
+  if(!lr){el.innerHTML=`<div class="row"><button class="btn" data-a="submitMeters">${t('sendFirst')}</button></div>`;return}
+  const n=active(d.id,me.roomId).length,c=calcUtility(lr,cur,n,d.tariffs);
+  el.innerHTML=`<div class="stack"><h3>${t('billFor',{a:fmtD(lr.date),b:fmtD(cur.date),n:c.days})}</h3>${billTable({lines:c.lines,total:c.total},n)}
+    <div class="row"><button class="btn" data-a="submitMeters">${t('sendAndBill')}</button><span class="muted" style="font-size:13px">${t('eachGets',{p:money(c.per)})}</span></div></div>`;
+}
+
+/* ================= owner ================= */
+function ownerView(){
+  if(ui.inviteCode){const inv=S.invites.find(i=>i.code===ui.inviteCode);if(inv&&inv.status==='sent')return inviteView(inv);ui.inviteCode=null}
+  const o=ui.oid&&S.owners.find(x=>x.id===ui.oid);if(!o)return ownerLanding();
+  const mine=ownerDorms(o.id);if(ui.wizard||!mine.length)return wizardView(o);
+  if(!D()||D().ownerId!==o.id)ui.dormId=mine[0].id;
+  const d=D(),pend=S.residents.filter(r=>r.dormId===d.id&&r.status==='pending');
+  const tabs=[['overview','tabOverview'],['rooms','tabRooms'],['requests','tabRequests'],['bills','tabBills'],['import','tabImport'],['tariffs','tabTariffs']];
+  const body=ui.otab==='rooms'?legend(d,'owner')+bedMap(d,'owner'):ui.otab==='requests'?ownerRequests(pend):ui.otab==='bills'?ownerBills(d):ui.otab==='tariffs'?ownerTariffs(d):ui.otab==='import'?ownerImport(d):ownerOverview(d);
+  return `<section class="intro" style="padding-bottom:0"><div><h1>${esc(d.name)}</h1><p>${t('dormSub',{city:esc(d.city),addr:esc(d.address),r:d.rooms.length,b:bedCount(d)})}</p></div>
+    <div class="row" style="justify-content:flex-end"><span class="muted">${esc(o.name)}</span><button class="btn ghost sm" data-a="ownerLogout">${t('logout')}</button></div></section>
+    <div class="chips">${mine.map(x=>`<button class="chip" aria-pressed="${x.id===d.id}" data-a="pickDorm" data-id="${x.id}">${esc(x.name)}</button>`).join('')}<button class="chip add" data-a="newDorm">${t('addDorm')}</button></div>
+    <nav class="tabs" role="tablist">${tabs.map(x=>`<button role="tab" aria-selected="${ui.otab===x[0]}" data-a="otab" data-v="${x[0]}">${t(x[1])}${x[0]==='requests'&&pend.length?`<span class="badge">${pend.length}</span>`:''}</button>`).join('')}</nav>${body}`;
+}
+function ownerLanding(){
+  return `<section class="intro"><div><h1>${t('ownerCab')}</h1><p>${t('ownerCabText')}</p></div>
+    <div class="card"><h3>${t('ownerLoginH')}</h3>${fld('ownerPhone',t('phone'),'inputmode="tel" placeholder="8 701 123 45 67"')}
+      <div class="row" style="margin-top:10px"><button class="btn" data-a="ownerLogin">${t('getCode')}</button></div>
+      <p class="muted" style="font-size:13px;margin-top:10px">${t('forDemo')} <button class="link" data-a="fillOwner" data-p="87011234567">Серик Ахметов, ${t('nDorms',{n:2})}</button></p></div></section>
+    <h2 style="margin-top:22px">${t('howConnect')}</h2>
+    <div class="steps" style="margin-top:12px">${[1,2,3,4].map(i=>`<div><b>${t('step'+i+'h')}</b>${t('step'+i)}</div>`).join('')}</div>
+    <div class="card" style="margin-top:16px"><h3>${t('applyH')}</h3><div class="grid2">${fld('ap-name',t('yourName'),'autocomplete="name"')}${fld('ap-phone',t('phoneShort'),'inputmode="tel"')}${fld('ap-dorm',t('dormName'))}${fld('ap-city',t('city'))}${fld('ap-places',t('placesApprox'),'inputmode="numeric"')}</div>
+      <p class="status err" id="ap-err"></p><button class="btn" data-a="applySubmit">${t('sendReq')}</button></div>`;
+}
+function inviteView(inv){
+  return `<section class="intro"><div><h1>${t('inviteH')}</h1><p>${t('inviteText',{n:esc(inv.ownerName),d:esc(inv.dormName),c:esc(inv.city)})}</p></div>
+    <div class="card"><h3>${t('confirmPhone')}</h3><p class="muted" style="margin-top:4px">${t('inviteCodeTo',{p:fmtPhone(inv.phone)})}</p>
+    <div class="row" style="margin-top:12px"><button class="btn" data-a="acceptInvite">${t('getCodeBtn')}</button><button class="btn ghost" data-a="leaveInvite">${t('notNow')}</button></div></div></section>`;
+}
+function wizardView(o){
+  const w=ui.wizard||{name:'',city:''},mine=ownerDorms(o.id);
+  return `<section class="intro" style="padding-bottom:0"><div><h1>${t('newDorm')}</h1><p>${t('wizText')}</p></div>
+    <div class="row" style="justify-content:flex-end">${mine.length?`<button class="btn ghost sm" data-a="cancelWizard">${t('cancel')}</button>`:''}<button class="btn ghost sm" data-a="ownerLogout">${t('logout')}</button></div></section>
+    <div class="card stack" style="margin-top:16px"><div class="grid2">${fld('wz-name',t('name'),`value="${esc(w.name)}"`)}${fld('wz-city',t('city'),`value="${esc(w.city)}"`)}${fld('wz-addr',t('address'),`placeholder="${t('addrPh')}"`)}
+      ${fld('wz-floors',t('floors'),'inputmode="numeric" value="2"')}${fld('wz-per',t('perFloor'),'inputmode="numeric" value="6"')}
+      <label class="fld">${t('bedsPerRoom')}<select id="wz-beds">${[1,2,3,4,6,8,10,12].map(n=>`<option ${n===8?'selected':''}>${n}</option>`).join('')}</select></label></div>
+      <label class="chk"><input type="checkbox" id="wz-bunks" checked> ${t('bunks')}</label>
+      <div class="grid2">${fld('wz-lower',t('rentLowerW'),'inputmode="numeric" value="45000"')}${fld('wz-upper',t('rentUpperW'),'inputmode="numeric" value="40000"')}</div>
+      <p class="muted" id="wz-sum"></p><p class="status err" id="wz-err"></p><p class="muted" style="font-size:13px">${t('tariffsDefault')}</p>
+      <div><button class="btn" data-a="createDorm">${t('createDorm')}</button></div></div>`;
+}
+function wizardSummary(){const el=$('#wz-sum');if(!el)return;const f=+$('#wz-floors').value||0,p=+$('#wz-per').value||0,b=+$('#wz-beds').value;
+  el.textContent=f&&p?t('wizSum',{r:f*p,b:f*p*b,list:f===1?`101–${100+p}`:`101–${100+p}, …, ${f*100+1}–${f*100+p}`}):''}
+function ownerOverview(d){
+  const act=S.residents.filter(r=>r.dormId===d.id&&r.status==='active'),m=todayISO().slice(0,7);
+  const collected=S.bills.filter(b=>b.dormId===d.id).flatMap(b=>b.shares).filter(s=>s.paid&&s.paidAt&&s.paidAt.startsWith(m)).reduce((s,x)=>s+x.amount,0);
+  const debtors=act.map(r=>({r,d:debtOf(r.id)})).filter(x=>x.d>0).sort((a,b)=>b.d-a.d),totalDebt=debtors.reduce((s,x)=>s+x.d,0);
+  const late=d.rooms.filter(r=>active(d.id,r.id).length&&(!lastReading(d,r.id)||days(lastReading(d,r.id).date,todayISO())>=30));
+  const pend=S.residents.filter(r=>r.dormId===d.id&&r.status==='pending').length,notJoined=act.filter(r=>r.invited&&!r.joined).length;
+  return `<div class="stack"><div class="stats"><div class="stat"><small>${t('occBeds')}</small><b>${act.length} / ${bedCount(d)}</b></div><div class="stat"><small>${t('gotIn',{m:t('months')[+m.slice(5)-1]})}</small><b>${money(collected)}</b></div><div class="stat red"><small>${t('resDebt')}</small><b>${money(totalDebt)}</b></div><div class="stat"><small>${t('newReqs')}</small><b>${pend}</b></div></div>
+    ${notJoined?`<div class="note">${t('notJoined',{n:notJoined})} <button class="link" data-a="reinvite">${t('resendInv')}</button></div>`:''}
+    ${late.length?`<div class="note" style="background:var(--pend-bg)">${t('lateMeters',{list:late.map(r=>`<button class="link" data-a="room" data-room="${r.id}">${r.id}</button>`).join(', ')})}</div>`:''}
+    <div class="card"><h3>${t('debtors',{n:debtors.length})}</h3><div class="tbl-wrap" style="margin-top:8px"><table><thead><tr><th>${t('th_res')}</th><th>${t('th_room')}</th><th>${t('th_uni')}</th><th class="num">${t('th_debt')}</th><th></th></tr></thead><tbody>
+    ${debtors.map(x=>`<tr class="clickrow" data-a="resident" data-id="${x.r.id}"><td>${esc(x.r.name)}</td><td>${x.r.roomId}</td><td>${esc(x.r.uni)}</td><td class="num" style="color:var(--debt);font-weight:700">${money(x.d)}</td>
+      <td class="num">${x.r.phone?`<a class="btn wa sm" target="_blank" rel="noopener" href="https://wa.me/${waNum(x.r.phone)}?text=${encodeURIComponent(remindText(x.r,x.d))}" data-stop>${t('remindWA')}</a>`:''}</td></tr>`).join('')||`<tr><td colspan="5" class="muted">${t('noDebts')}</td></tr>`}</tbody></table></div></div></div>`;
+}
+const remindText=(r,d)=>t('remindText',{n:firstName(r.name),r:r.roomId,s:money(d)});
+function ownerRequests(pend){
+  if(!pend.length)return `<div class="card"><h3>${t('noReqs')}</h3><p class="muted" style="margin-top:6px">${t('noReqsText')}</p></div>`;
+  return `<div class="stack">${pend.map(r=>`<div class="card"><div class="row"><div class="grow"><h3>${esc(r.name)}</h3><p class="muted">${t('reqLine',{r:r.roomId,bed:bedText(bedOf(r)),d:fmtD(r.checkIn)})}</p></div><span class="pill wait">${t('waits')}</span></div>
+    <div class="grid2" style="margin:8px 0 12px"><p class="fld">${t('phoneVerified')}<br><a href="tel:${esc(r.phone)}" style="color:var(--ink)">${fmtPhone(r.phone)}</a></p>${showP(t('parents'),esc(fmtPhone(r.parentPhone)||'—'))}${showP(t('uniCourse'),esc(r.uni)+', '+r.course)}</div>
+    <div class="row"><button class="btn" data-a="approve" data-id="${r.id}">${t('approve')}</button><button class="btn danger" data-a="reject" data-id="${r.id}">${t('reject')}</button></div></div>`).join('')}</div>`;
+}
+function ownerBills(d){
+  const next=nextMonth(d.rentMonths[d.rentMonths.length-1]||todayISO().slice(0,7));const groups={};
+  for(const b of S.bills.filter(b=>b.dormId===d.id)){const k=b.type==='rent'?'rent:'+b.month:'util:'+b.id;(groups[k]=groups[k]||[]).push(b)}
+  const rows=Object.entries(groups).map(([k,bs])=>{const sh=bs.flatMap(b=>b.shares),tot=sh.reduce((s,x)=>s+x.amount,0),got=sh.filter(x=>x.paid).reduce((s,x)=>s+x.amount,0),b=bs[0];
+    return{k,title:b.type==='rent'?billTitle(b)+' '+t('allRes'):billTitle(b)+', '+t('roomN',{r:b.roomId}),created:b.created,n:sh.length,paid:sh.filter(x=>x.paid).length,tot,got}}).sort((a,b)=>b.created.localeCompare(a.created)||a.title.localeCompare(b.title));
+  return `<div class="stack"><div class="card row"><div class="grow"><h3>${t('rentFor',{m:monthName(next)})}</h3><p class="muted">${t('rentForText')}</p></div><button class="btn" data-a="genRent" data-m="${next}">${t('issueRent')}</button></div>
+  <div class="card"><h3>${t('allBills')}</h3><div class="tbl-wrap" style="margin-top:8px"><table><thead><tr><th>${t('th_bill')}</th><th>${t('th_issued')}</th><th class="num">${t('th_paidN')}</th><th class="num">${t('th_got')}</th><th class="num">${t('th_exp')}</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr class="clickrow" data-a="group" data-k="${r.k}"><td>${esc(r.title)}</td><td>${fmtD(r.created)}</td><td class="num">${t('ofN',{a:r.paid,b:r.n})}</td><td class="num">${money(r.got)}</td><td class="num" style="color:${r.tot-r.got>0?'var(--debt)':'inherit'}">${money(r.tot-r.got)}</td></tr>`).join('')||`<tr><td colspan="5" class="muted">${t('noBills')}</td></tr>`}</tbody></table></div></div></div>`;
+}
+function ownerTariffs(d){
+  const T=d.tariffs,f=(k,l,u)=>`<label class="fld">${t(l)}, ${t(u)}<input data-t="${k}" inputmode="decimal" value="${decStr(T[k])}"></label>`;
+  return `<div class="card stack"><h3>${t('tariffsH',{d:esc(d.name)})}</h3><p class="muted">${t('tariffsNote')}</p>
+  <div class="grid2">${f('elec','l_elec','perKwh')}${f('hot','l_hot','perM3')}${f('cold','l_cold','perM3')}${f('sewage','l_sewage','perRoom')}${f('internet','l_internet','perPerson')}${f('vdgo','l_vdgo','perRoom')}${f('maint','l_maint','perRoom')}${f('garbage','l_garbage','perPerson')}${f('commonElec','l_commonElec','perRoom')}${f('rentLower',d.bunks?'rentLowerT':'rentBed','perMonth')}${d.bunks?f('rentUpper','rentUpperT','perMonth'):''}</div>
+  <div><button class="btn" data-a="saveTariffs">${t('saveTariffs')}</button></div></div>`;
+}
+
+/* ----- Excel import ----- */
+function ownerImport(d){
+  const p=importPlan&&importPlan.dormId===d.id?importPlan:null;let preview='';
+  if(p){const ok=p.rows.filter(r=>r.st==='ok'||r.st==='new').length,newRooms=[...new Set(p.rows.filter(r=>r.st==='new').map(r=>r.room))];
+    const pc={ok:'ok',new:'wait',dup:'wait',noroom:'no',full:'no'};
+    preview=`<div class="card stack"><div><h3>${t('checkH')}</h3><p class="muted">${t('checkText',{n:p.rows.length,sheet:p.sheet?t('onSheet',{s:esc(p.sheet)}):'',ok})}${newRooms.length?t('newRoomsWill',{l:newRooms.join(', ')}):''}</p></div>
+      <div class="tbl-wrap"><table><thead><tr><th>${t('th_rm')}</th><th>${t('th_name')}</th><th>${t('phoneShort')}</th><th>${t('th_uni')}</th><th>${t('th_bed')}</th><th></th></tr></thead><tbody>
+      ${p.rows.slice(0,300).map(r=>`<tr><td>${esc(r.room||'—')}</td><td>${esc(r.name)}</td><td>${r.phone?fmtPhone(r.phone):`<span style="color:var(--pend)">${t('noPhone')}</span>`}</td><td>${esc(r.uni)}</td><td>${r.bedN?r.bedN+(r.type&&r.type!=='single'?' ('+t('bed_'+r.type)+')':''):'—'}</td><td><span class="pill ${pc[r.st]}">${t('s_'+r.st)}</span></td></tr>`).join('')}</tbody></table></div>
+      ${p.rows.some(r=>!r.phone&&(r.st==='ok'||r.st==='new'))?`<p class="muted" style="font-size:13px">${t('noPhoneNote')}</p>`:''}
+      <label class="chk"><input type="checkbox" id="im-wa" checked> ${t('sendWA')}</label>
+      <div class="row"><button class="btn" data-a="importGo" ${ok?'':'disabled'}>${t('addN',{n:ok})}</button><button class="btn ghost" data-a="importCancel">${t('cancel')}</button></div></div>`}
+  return `<div class="stack"><div class="card stack"><h3>${t('impH')}</h3><p class="muted">${t('impText')}</p>
+    <label class="drop"><input type="file" id="im-file" accept=".xlsx,.xls,.csv" hidden><b>${t('chooseFile')}</b><br><span class="muted" style="font-size:13px">${t('gsheets')}</span></label>
+    <div class="row"><button class="link" data-a="importSample">${t('trySample')}</button></div><p class="status" id="im-st"></p></div>${preview}</div>`;
+}
+let xlsxP=null;
+function loadXLSX(){if(window.XLSX)return Promise.resolve();if(xlsxP)return xlsxP;xlsxP=new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';s.onload=ok;s.onerror=()=>{xlsxP=null;no(new Error('load'))};document.head.appendChild(s)});return xlsxP}
+async function readFile(file){
+  const st=$('#im-st');st.className='status';st.innerHTML=`<span class="spin"></span> ${t('reading')}`;
+  try{await loadXLSX()}catch(e){st.className='status err';st.textContent=t('xlsxLoadErr');return}
+  try{const wb=XLSX.read(await file.arrayBuffer(),{type:'array'});let best=null;
+    for(const name of wb.SheetNames){const p=parseRows(XLSX.utils.sheet_to_json(wb.Sheets[name],{header:1,defval:'',raw:false}));if(!p.error&&(!best||p.rows.length>best.rows.length))best={...p,sheet:name}}
+    if(!best){st.className='status err';st.textContent=t('noFio');return}st.textContent='';planImport(D(),best);
+  }catch(e){st.className='status err';st.textContent=t('badFile')}
+}
+// Headers are recognised in Kazakh, Russian and English
+const H_NAME=/фио|аты-?жөні|аты жөні|full ?name|^name$|student/,H_PHONE=/тел|phone|ұялы/,H_PAR=/родит|ата-?ана|parent/,H_UNI=/наимен|универ|вуз|оқу|жоо|univ|college|school/,H_ROOM=/комн|бөлме|room/,H_PLACE=/^мест|место|орын|^bed|place/;
+const V_UP=/верх|жоғар|upper|top/i,V_LO=/нижн|төмен|lower|bottom/i;
+function parseRows(rows){
+  const h=rows.findIndex(r=>r.some(c=>H_NAME.test(String(c).toLowerCase().trim())));if(h<0)return{error:true};
+  const H=rows[h].map(c=>String(c).toLowerCase().trim()),body=rows.slice(h+1),ncol=Math.max(...rows.map(r=>r.length));
+  const ci=re=>H.findIndex(c=>re.test(c)),score=(i,re)=>body.filter(r=>re.test(String(r[i]??'').trim())).length;
+  const cName=ci(H_NAME),cPar=ci(H_PAR),cUni=ci(H_UNI);let cPhone=H.findIndex(c=>H_PHONE.test(c)&&!H_PAR.test(c));
+  let cPlace=ci(H_PLACE);if(cPlace<0){let b=-1,bs=0;for(let i=0;i<ncol;i++){const s=body.filter(r=>V_UP.test(r[i])||V_LO.test(r[i])).length;if(s>bs){bs=s;b=i}}cPlace=b}
+  let cRoom=ci(H_ROOM);if(cRoom<0){let b=-1,bs=0;for(let i=0;i<cName;i++){const s=score(i,/^\d{3,4}$/);if(s>bs){bs=s;b=i}}cRoom=b}
+  if(cPhone<0){let b=-1,bs=0;for(let i=0;i<ncol;i++){if(i===cPar)continue;const s=score(i,/^[\s+]*[78][\d\s-]{9,}$/);if(s>bs){bs=s;b=i}}cPhone=b}
+  let room=null;const out=[];
+  for(const r of body){
+    const rv=cRoom>=0?String(r[cRoom]??'').trim():'';if(/^\d{3,4}$/.test(rv))room=rv;
+    const name=String(r[cName]??'').trim().replace(/\s+/g,' ');if(name.split(' ').length<2||H_NAME.test(name.toLowerCase()))continue;
+    const place=cPlace>=0?String(r[cPlace]??''):'',pm=cPar>=0?String(r[cPar]??'').replace(/[\s-]/g,'').match(/[78]\d{10}/):null;
+    out.push({room,name,phone:cPhone>=0?normPhone(r[cPhone]):'',uni:cUni>=0?String(r[cUni]??'').trim():'',parentPhone:pm?normPhone(pm[0]):'',type:V_UP.test(place)?'upper':V_LO.test(place)?'lower':''});
+  }
+  return{rows:out};
+}
+function planImport(d,parsed){
+  const taken=new Set(),newRooms={};
+  const rows=parsed.rows.map(r=>{const x={...r};
+    if(r.phone&&findByPhone(S.residents.filter(z=>z.status!=='left'),r.phone)){x.st='dup';return x}
+    if(!r.room){x.st='noroom';return x}
+    let room=roomOf(d,r.room),isNew=false;if(!room){room=newRooms[r.room]||(newRooms[r.room]=makeRoom(d.id,r.room,d.bedsPerRoom,d.bunks));isNew=true}
+    const free=room.beds.filter(b=>!occupant(b.id)&&!taken.has(b.id)),b=free.find(b=>r.type&&b.type===r.type)||free[0];
+    if(!b){x.st='full';return x}taken.add(b.id);x.bedId=b.id;x.bedN=b.n;x.type=b.type;x.st=isNew?'new':'ok';return x});
+  importPlan={dormId:d.id,sheet:parsed.sheet,rows,newRooms};render();
+}
+const SAMPLE=[['','№','ФИО','телефон','наименование','с какого числа','контакты родителей','','оплата'],
+  ['101',1,'Тлеубаев Нурдаулет','87014303915','АГУ','20 000-17.08.2026','Сандыгаш 87785070752','верхнее место','АГУ'],['',2,'Алмагамбет Алихан','87764156388','АГУ','20 000-17.08.2026','Айдар-87712258854','нижнее место','АГУ'],
+  ['102',3,'Дарибек Нурсаян','87756150855','МУИТ','200 000-15.08.2026','Айгуль 87012345678','нижнее место','МУИТ'],['',4,'Болатбек Нурислам','87077907929','АГУ','200 000-13.08.2026','Пернет-87770853119','верхнее место','АГУ'],
+  ['',5,'Омаров Нурлан','87479181417','АКЖТ','200 000-24.08.2026','Айгуль-87055303451','нижнее место','АКЖТ'],['107',6,'Сапаров Хадимухаммет','87760020151','АГУ','депозит 10000','','верхнее место','АГУ'],
+  ['',7,'Бекнур Ерасыл','','Туран','депозит 10000','Мама 87017778899','нижнее место','Туран'],['',8,'Жумабек','87011112233','АГУ','','','','']];
+function importGo(){
+  const p=importPlan,d=dorm(p.dormId),wa=$('#im-wa')&&$('#im-wa').checked;let n=0,inv=0;
+  for(const r of p.rows){if(r.st!=='ok'&&r.st!=='new')continue;
+    if(r.st==='new'&&!roomOf(d,r.room)){d.rooms.push(p.newRooms[r.room]);d.rooms.sort((a,b)=>+a.id-+b.id)}
+    if(occupant(r.bedId))continue;
+    S.residents.push({id:'i'+(S.seq++),dormId:d.id,name:r.name,phone:r.phone,uni:r.uni,course:null,parentPhone:r.parentPhone,roomId:r.room,bedId:r.bedId,checkIn:todayISO(),status:'active',imported:true,invited:wa&&!!r.phone,joined:false});n++;if(wa&&r.phone)inv++}
+  importPlan=null;save();ui.otab='rooms';render();toast(t('addedN',{n})+(wa?t('invSentN',{n:inv}):''));
+}
+
+/* ================= platform admin ================= */
+function adminView(){
+  const apps=S.applications.filter(a=>a.status==='new'),tabs=[['dorms','tabDorms'],['apps','tabApps'],['invites','tabInv']],studs=S.residents.filter(r=>r.status==='active').length;let body='';
+  if(ui.atab==='apps')body=apps.length?`<div class="stack">${apps.map(a=>`<div class="card"><div class="row"><div class="grow"><h3>${esc(a.dormName)}</h3><p class="muted">${t('appFrom',{c:esc(a.city),p:esc(a.places||'—'),d:fmtD(a.created)})}</p></div><span class="pill wait">${t('appNew')}</span></div>
+      <div class="grid2" style="margin:8px 0 12px">${showP(t('ownerL'),esc(a.name))}<p class="fld">${t('phoneVerified')}<br><a href="tel:${esc(a.phone)}" style="color:var(--ink)">${fmtPhone(a.phone)}</a></p></div>
+      <div class="row"><button class="btn" data-a="appApprove" data-id="${a.id}">${t('appApprove')}</button><button class="btn danger" data-a="appReject" data-id="${a.id}">${t('reject')}</button></div></div>`).join('')}</div>`
+    :`<div class="card"><h3>${t('noApps')}</h3><p class="muted" style="margin-top:6px">${t('noAppsText')}</p></div>`;
+  else if(ui.atab==='invites')body=`<div class="stack"><div class="card stack"><h3>${t('inviteOwner')}</h3><div class="grid2">${fld('iv-name',t('ownerName'))}${fld('iv-phone',t('ownerPhone'),'inputmode="tel"')}${fld('iv-dorm',t('dormName'))}${fld('iv-city',t('city'))}</div><p class="status err" id="iv-err"></p><div><button class="btn" data-a="inviteCreate">${t('createInv')}</button></div></div>
+    <div class="card"><h3>${t('sentInv')}</h3>${S.invites.slice().reverse().map(i=>`<div class="item"><div class="grow"><div class="t">${esc(i.dormName)}, ${esc(i.city)}</div><div class="s">${esc(i.ownerName)}, ${fmtPhone(i.phone)}. ${t('link')}: zhatak.kz/i/${i.code}</div></div>
+      ${i.status==='accepted'?`<span class="pill ok">${t('connected')}</span>`:`<a class="btn wa sm" target="_blank" rel="noopener" href="https://wa.me/${waNum(i.phone)}?text=${encodeURIComponent(t('invMsg',{n:i.ownerName.split(' ')[0],d:i.dormName,l:'zhatak.kz/i/'+i.code}))}">${t('send')}</a><button class="btn ghost sm" data-a="openInvite" data-code="${i.code}">${t('openAsOwner')}</button>`}</div>`).join('')}</div></div>`;
+  else body=`<div class="stack"><div class="stats"><div class="stat"><small>${t('dormsN')}</small><b>${S.dorms.length}</b></div><div class="stat"><small>${t('ownersN')}</small><b>${S.owners.length}</b></div><div class="stat"><small>${t('studentsN')}</small><b>${studs}</b></div><div class="stat"><small>${t('tabApps')}</small><b>${apps.length}</b></div></div>
+    <div class="card"><h3>${t('allDormsH')}</h3><div class="tbl-wrap" style="margin-top:8px"><table><thead><tr><th>${t('th_dorm')}</th><th>${t('th_city')}</th><th>${t('th_owner')}</th><th class="num">${t('th_occ')}</th><th class="num">${t('resDebt')}</th></tr></thead><tbody>
+    ${S.dorms.map(d=>{const o=S.owners.find(x=>x.id===d.ownerId),act=S.residents.filter(r=>r.dormId===d.id&&r.status==='active');return `<tr class="clickrow" data-a="adminOpenDorm" data-id="${d.id}"><td>${esc(d.name)}</td><td>${esc(d.city)}</td><td>${esc(o?o.name:'—')}</td><td class="num">${act.length} / ${bedCount(d)}</td><td class="num">${money(act.reduce((s,r)=>s+debtOf(r.id),0))}</td></tr>`}).join('')}</tbody></table></div>
+    <p class="muted" style="font-size:13px;margin-top:8px">${t('rowHint')}</p></div></div>`;
+  return `<section class="intro" style="padding-bottom:0"><div><h1>${t('platTitle')}</h1><p>${t('platText')}</p></div></section>
+    <nav class="tabs" role="tablist">${tabs.map(x=>`<button role="tab" aria-selected="${ui.atab===x[0]}" data-a="atab" data-v="${x[0]}">${t(x[1])}${x[0]==='apps'&&apps.length?`<span class="badge">${apps.length}</span>`:''}</button>`).join('')}</nav>${body}`;
+}
+function newInvite(o){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let code='';for(let i=0;i<6;i++)code+=c[Math.floor(Math.random()*c.length)];const inv={code,...o,created:todayISO(),status:'sent'};S.invites.push(inv);return inv}
+
+/* ================= modals ================= */
+function roomModal(rid){
+  const d=D(),r=roomOf(d,rid),rs=d.readings[rid]||[],lr=rs[rs.length-1],pr=rs[rs.length-2];
+  const people=r.beds.map(b=>{const o=occupant(b.id);return `<div class="item"><div class="grow"><div class="t">${o?esc(o.name):`<span class="muted">${t('st_free')}</span>`}</div><div class="s">${cap(bedText(b))}${o&&o.uni?', '+esc(o.uni):''}</div></div>
+    ${o?(o.status==='pending'?`<span class="pill wait">${t('st_req')}</span>`:`<button class="btn ghost sm" data-a="resident" data-id="${o.id}">${debtOf(o.id)>0?t('debtAmt',{s:money(debtOf(o.id))}):t('paid')}</button>`):''}</div>`}).join('');
+  const photos=lr&&lr.photos?Object.values(lr.photos).filter(Boolean):[];
+  openModal(sheetHead(t('roomH',{r:rid}),t('roomSub',{f:r.floor,a:active(d.id,rid).length,t:r.beds.length}))+`<div class="stack"><div><h3>${t('metersH')}</h3>
+    ${lr?`<div class="tbl-wrap"><table><thead><tr><th></th>${pr?`<th>${fmtD(pr.date)}</th>`:''}<th>${fmtD(lr.date)}</th></tr></thead><tbody>${Object.entries(METERS).map(([k,m])=>`<tr><td>${t('m_'+k)}</td>${pr?`<td>${odo(pr[k],m.dec,1)}</td>`:''}<td>${odo(lr[k],m.dec,1)}</td></tr>`).join('')}</tbody></table></div>
+    <p class="muted" style="font-size:13px;margin-top:6px">${lr.by&&res(lr.by)?t('submittedBy',{n:esc(res(lr.by).name)}):t('byAdmin')}</p>${photos.length?`<div class="photos" style="margin-top:8px">${photos.map(p=>`<img src="${p}" alt="${t('meterPhoto')}">`).join('')}</div>`:''}`
+    :`<p class="muted">${t('noReadings')}</p>`}</div><div><h3>${t('residents')}</h3>${people}</div></div>`);
+}
+function residentModal(id){
+  const r=res(id),b=bedOf(r),items=sharesOf(id).sort((a,c)=>c.bill.created.localeCompare(a.bill.created)),d=debtOf(id);
+  openModal(sheetHead(esc(r.name),`${t('roomH',{r:r.roomId})}, ${bedText(b)}${r.uni?', '+esc(r.uni):''}`)+
+    `<div class="stack"><div class="grid2"><p class="fld">${t('phoneShort')}<br>${r.phone?`<a href="tel:${esc(r.phone)}" style="color:var(--ink)">${fmtPhone(r.phone)}</a>`:`<span style="color:var(--pend)">${t('notGiven')}</span>`}</p>${showP(t('parents'),esc(fmtPhone(r.parentPhone)||'—'))}${showP(t('cabinet'),r.imported&&!r.joined?t('notSignedIn'):t('activeAcc'))}</div>
+    ${d>0?`<div class="row"><b style="color:var(--debt)">${t('debtAmt',{s:money(d)})}</b>${r.phone?`<a class="btn wa sm" target="_blank" rel="noopener" href="https://wa.me/${waNum(r.phone)}?text=${encodeURIComponent(remindText(r,d))}">${t('remindWA')}</a>`:''}</div>`:`<span class="pill ok">${t('noDebts')}</span>`}
+    <div>${items.map(x=>`<div class="item"><div class="grow"><div class="t">${esc(billTitle(x.bill))}</div><div class="s">${x.share.paid?t('paidOn',{d:fmtD(x.share.paidAt)})+(x.share.via?', '+t(x.share.via):''):t('notPaid')}</div></div><div class="amt">${money(x.share.amount)}</div>
+      ${x.share.paid?`<span class="pill ok">${t('paid')}</span>`:`<button class="btn ghost sm" data-a="markPaid" data-b="${x.bill.id}" data-id="${id}">${t('markPaid')}</button>`}</div>`).join('')||`<p class="muted">${t('noBills')}</p>`}</div>
+    <div><button class="btn danger sm" data-a="evict" data-id="${id}">${t('evict')}</button></div></div>`);
+}
+function groupModal(k){
+  const d=D(),bs=k.startsWith('rent:')?S.bills.filter(b=>b.dormId===d.id&&b.type==='rent'&&b.month===k.slice(5)):S.bills.filter(b=>b.id===k.slice(5)),b0=bs[0],sh=bs.flatMap(b=>b.shares.map(s=>({b,s})));
+  openModal(sheetHead(esc(billTitle(b0))+(b0.type==='util'?', '+t('roomN',{r:b0.roomId}):''),t('issuedOn',{d:fmtD(b0.created)}))+`<div class="stack">${b0.type==='util'?billTable(b0,b0.shares.length):''}
+    <div>${sh.map(({b,s})=>{const r=res(s.rid);return `<div class="item"><div class="grow"><div class="t">${r?esc(r.name):'—'}</div><div class="s">${r&&r.roomId?t('roomH',{r:r.roomId}):t('movedOut')}${s.paid?', '+t('paidOn',{d:fmtD(s.paidAt)}):''}</div></div><div class="amt">${money(s.amount)}</div>
+      ${s.paid?`<span class="pill ok">${t('paid')}</span>`:`<button class="btn ghost sm" data-a="markPaid" data-b="${b.id}" data-id="${s.rid}" data-k="${k}">${t('markPaid')}</button>`}</div>`}).join('')}</div></div>`);
+}
+function bookModal(bid,rid){
+  const d=D(),b=roomOf(d,rid).beds.find(x=>x.id===bid);
+  openModal(sheetHead(`${t('roomH',{r:rid})}, ${bedText(b)}`,cap(t('bookSub',{p:money(priceOf(d,b))})))+
+    `<div class="grid2">${fld('bk-name',t('fio'),`autocomplete="name" placeholder="${t('fioPh')}"`)}${fld('bk-phone',t('phoneShort'),'inputmode="tel" autocomplete="tel" placeholder="8 707 123 45 67"')}
+      <label class="fld">${t('university')}<select id="bk-uni">${UNIS.map(u=>`<option>${u}</option>`).join('')}<option value="">${t('other')}</option></select></label>
+      <label class="fld">${t('course')}<select id="bk-course">${[1,2,3,4,5,6].map(c=>`<option>${c}</option>`).join('')}</select></label>
+      <label class="fld" id="bk-uni2-wrap" hidden>${t('uniName')}<input id="bk-uni2"></label>
+      ${fld('bk-parent',t('parentPhone'),'inputmode="tel" placeholder="8 701 765 43 21"')}${fld('bk-date',t('checkIn'),`type="date" value="${todayISO()}"`)}</div>
+    <p class="status err" id="bk-err"></p><div class="row" style="margin-top:6px"><button class="btn" data-a="bookSubmit" data-bed="${bid}" data-room="${rid}">${t('bookBtn')}</button></div>`);
+  $('#bk-uni').addEventListener('change',e=>{$('#bk-uni2-wrap').hidden=e.target.value!==''});
+}
+function payModal(ids){
+  const me=res(ui.sid),sum=ids.reduce((s,id)=>s+S.bills.find(x=>x.id===id).shares.find(x=>x.rid===me.id).amount,0);
+  openModal(sheetHead(t('payH'),ids.length===1?esc(billTitle(S.bills.find(x=>x.id===ids[0]))):t('nBills',{n:ids.length}))+`<div class="stack"><div class="balance"><span>${t('toPay')}</span><b>${money(sum)}</b></div>
+    <div class="note">${t('payDemo')}</div><div class="row"><button class="btn" data-a="payConfirm" data-ids="${ids.join(',')}" data-via="kaspi">${t('payKaspi')}</button><button class="btn ghost" data-a="payConfirm" data-ids="${ids.join(',')}" data-via="card">${t('payCard')}</button></div></div>`);
+}
+
+/* ================= meter photo recognition ================= */
+async function shrink(file,max){const url=URL.createObjectURL(file);try{const img=await new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=no;i.src=url});const k=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);return c.toDataURL('image/jpeg',0.62)}finally{URL.revokeObjectURL(url)}}
+async function onPhoto(k,file){
+  const me=res(ui.sid),d=dorm(me.dormId),lr=lastReading(d,me.roomId),st=$('#st-'+k),m=METERS[k],u=t(m.unit);
+  try{meter[k].photo=await shrink(file,420)}catch(e){st.className='status err';st.textContent=t('photoOpenErr');return}
+  const th=$('#th-'+k);th.src=meter[k].photo;th.hidden=false;$('#pb-'+k).textContent=t('resnap');
+  if(!sampleFn||!canImg){st.className='status warn';st.textContent=t('photoAttached');return}
+  st.className='status';st.innerHTML=`<span class="spin"></span> ${t('recognizing')}`;
+  const kind={elec:'electricity meter (kWh)',hot:'hot water meter (m³)',cold:'cold water meter (m³)'}[k],langName={ru:'Russian',kk:'Kazakh',en:'English'}[ui.lang];
+  const prompt=`The photo shows a utility meter: ${kind}.${lr?` Its previous reading was ${lr[k]}; the current one should not be lower and is usually only slightly higher.`:''}
+Read the main counter. Black or white digits are the integer part; red digits or digits after the decimal point are the fractional part. Do not confuse it with the serial number, year of manufacture or other labels.
+Reply with JSON only: {"value": number or null, "confidence": "high" or "low", "note": "a short note in ${langName} if the photo is unclear or not a meter, otherwise an empty string"}`;
+  try{const r=await sampleFn.json(prompt,{images:[file]});
+    if(r&&typeof r.value==='number'){const v=+r.value.toFixed(m.dec);meter[k].val=decStr(v);$('#mv-'+k).value=meter[k].val;const low=r.confidence!=='high'||(lr&&v<lr[k]);
+      st.className='status '+(low?'warn':'ok');st.textContent=low?t('recLow',{v:meter[k].val,n:r.note?': '+r.note:''}):t('recOk',{v:meter[k].val,u});updatePreview()}
+    else{st.className='status warn';st.textContent=(r&&r.note?r.note+'. ':'')+t('recFail')}
+  }catch(e){st.className='status warn';st.textContent=e&&e.code==='not_granted'?t('recDenied'):e&&e.code==='rate_limited'?t('recRate'):t('recErr');if(e&&(e.code==='not_granted'||e.code==='images_unavailable'))canImg=false}
+}
+
+/* ================= actions ================= */
+const top0=()=>scrollTo(0,0);
+const A={
+  lang:d=>{ui.lang=d.v;render();if(ui.stab==='meters')updatePreview();wizardSummary()},
+  role:d=>{ui.role=d.v;if(d.v!=='owner')ui.inviteCode=null;render();top0()},
+  reset:()=>{if(confirm(t('resetConfirm'))){S=seed();save();Object.assign(ui,{sid:null,oid:null,dormId:null,inviteCode:null,wizard:null});meter={elec:{},hot:{},cold:{}};importPlan=null;render();toast(t('resetDone'))}},
+  close:()=>{otp=null;closeModal()},otpCheck,otpResend:()=>{if(otp)otpStart(otp.phone,t('newCode'),otp.onOk)},
+  stab:d=>{ui.stab=d.v;render();if(d.v==='meters')updatePreview()},otab:d=>{ui.otab=d.v;render()},atab:d=>{ui.atab=d.v;render()},
+  toCatalog:()=>{ui.dormId=null;render();top0()},openDorm:d=>{ui.dormId=d.id;render();top0()},
+  fillPhone:d=>{$('#loginPhone').value=fmtPhone(d.p);A.login()},
+  login:()=>{const p=$('#loginPhone').value;if(digits(p).length!==10){toast(t('phone11'));return}
+    const r=findByPhone(S.residents.filter(x=>x.status!=='left'),p);if(!r){toast(t('phoneNotFound'));return}
+    otpStart(normPhone(p),t('signInH'),()=>{r.joined=true;ui.sid=r.id;ui.dormId=r.dormId;ui.stab='bills';save();render();top0()})},
+  logout:()=>{ui.sid=null;meter={elec:{},hot:{},cold:{}};render()},
+  book:d=>bookModal(d.bed,d.room),
+  bookSubmit:d=>{const name=$('#bk-name').value.trim().replace(/\s+/g,' '),phone=$('#bk-phone').value,uni=$('#bk-uni').value||$('#bk-uni2').value.trim(),err=$('#bk-err');
+    if(name.split(' ').length<2){err.textContent=t('bkErrName');return}if(digits(phone).length!==10){err.textContent=t('phoneErr');return}if(!uni){err.textContent=t('bkErrUni');return}
+    if(findByPhone(S.residents.filter(x=>x.status!=='left'),phone)){err.textContent=t('bkErrDup');return}
+    const data={name,phone:normPhone(phone),uni,course:+$('#bk-course').value,parentPhone:normPhone($('#bk-parent').value),checkIn:$('#bk-date').value||todayISO()};
+    otpStart(data.phone,t('confirmPhone'),()=>{if(occupant(d.bed)){toast(t('bedTaken'));render();return}
+      const r={id:'i'+(S.seq++),dormId:ui.dormId,...data,roomId:d.room,bedId:d.bed,status:'pending',created:todayISO(),joined:true};S.residents.push(r);save();ui.sid=r.id;render();top0();toast(t('reqSent'))})},
+  cancelBooking:()=>{S.residents=S.residents.filter(r=>r.id!==ui.sid);ui.sid=null;save();render();toast(t('reqCancelled'))},
+  billInfo:d=>{const b=S.bills.find(x=>x.id===d.b);openModal(sheetHead(esc(billTitle(b)),t('roomH',{r:b.roomId})+', '+t('issuedOn',{d:fmtD(b.created)}))+billTable(b,b.type==='util'?b.shares.length:1))},
+  pay:d=>payModal([d.b]),payAll:()=>payModal(sharesOf(ui.sid).filter(x=>!x.share.paid).map(x=>x.bill.id)),
+  payConfirm:d=>{let s=0;for(const id of d.ids.split(',')){const sh=S.bills.find(x=>x.id===id).shares.find(x=>x.rid===ui.sid);if(!sh.paid){sh.paid=true;sh.paidAt=todayISO();sh.via=d.via==='kaspi'?'Kaspi':'card';s+=sh.amount}}save();closeModal();render();toast(t('paidSum',{s:money(s)}))},
+  submitMeters:()=>{const me=res(ui.sid),d=dorm(me.dormId),lr=lastReading(d,me.roomId),cur={date:todayISO(),by:me.id,photos:{}};
+    for(const k in METERS){cur[k]=num(meter[k].val);if(cur[k]==null||(lr&&cur[k]<lr[k])){toast(t('checkReadings'));return}cur.photos[k]=meter[k].photo||null}
+    (d.readings[me.roomId]=d.readings[me.roomId]||[]).push(cur);
+    if(lr){const mates=active(d.id,me.roomId),c=calcUtility(lr,cur,mates.length,d.tariffs);S.bills.push({id:'i'+(S.seq++),dormId:d.id,type:'util',roomId:me.roomId,period:[lr.date,cur.date],lines:c.lines,total:c.total,created:todayISO(),shares:mates.map(m=>({rid:m.id,amount:c.per,paid:false,paidAt:null}))});toast(t('readingsBilled',{n:mates.length}))}
+    else toast(t('firstSaved'));
+    save();meter={elec:{},hot:{},cold:{}};ui.stab='bills';render();top0()},
+  fillOwner:d=>{$('#ownerPhone').value=fmtPhone(d.p);A.ownerLogin()},
+  ownerLogin:()=>{const p=$('#ownerPhone').value;if(digits(p).length!==10){toast(t('phone11'));return}
+    const o=findByPhone(S.owners,p);if(!o){const inv=S.invites.find(i=>i.status==='sent'&&digits(i.phone)===digits(p));if(inv){ui.inviteCode=inv.code;render();return}toast(t('ownerNotFound'));return}
+    otpStart(o.phone,t('ownerSignIn'),()=>{ui.oid=o.id;ui.dormId=null;ui.otab='overview';render();top0()})},
+  ownerLogout:()=>{ui.oid=null;ui.wizard=null;importPlan=null;render()},
+  applySubmit:()=>{const v=id=>$(id).value.trim(),err=$('#ap-err'),a={name:v('#ap-name'),phone:normPhone(v('#ap-phone')),dormName:v('#ap-dorm'),city:v('#ap-city'),places:v('#ap-places')};
+    if(!a.name||!a.dormName||!a.city){err.textContent=t('apErr');return}if(!a.phone){err.textContent=t('phoneErr');return}
+    otpStart(a.phone,t('confirmPhone'),()=>{S.applications.push({id:'a'+(S.seq++),...a,created:todayISO(),status:'new'});save();
+      $('#app').innerHTML=`<div class="card stack" style="margin-top:24px"><span class="pill ok">${t('reqSentPill')}</span><h2>${t('thanks',{n:esc(a.name.split(' ')[0])})}</h2><p>${t('reqSentText',{p:fmtPhone(a.phone)})}</p><p class="muted">${t('reqSentDemo')}</p></div>`})},
+  acceptInvite:()=>{const inv=S.invites.find(i=>i.code===ui.inviteCode);otpStart(inv.phone,t('confirmPhone'),()=>{let o=findByPhone(S.owners,inv.phone);if(!o){o={id:'o'+(S.seq++),name:inv.ownerName,phone:inv.phone};S.owners.push(o)}
+      inv.status='accepted';inv.ownerId=o.id;ui.oid=o.id;ui.inviteCode=null;ui.wizard={name:inv.dormName,city:inv.city};save();render();top0();wizardSummary()})},
+  leaveInvite:()=>{ui.inviteCode=null;render()},
+  newDorm:()=>{ui.wizard={name:'',city:''};render();top0();wizardSummary()},cancelWizard:()=>{ui.wizard=null;render()},
+  createDorm:()=>{const v=id=>$(id).value.trim(),err=$('#wz-err'),floors=parseInt(v('#wz-floors')),per=parseInt(v('#wz-per')),beds=+v('#wz-beds'),lo=num(v('#wz-lower')),up=num(v('#wz-upper'));let bunks=$('#wz-bunks').checked;
+    if(!v('#wz-name')||!v('#wz-city')){err.textContent=t('wzErrName');return}if(!(floors>=1&&floors<=40&&per>=1&&per<=60)){err.textContent=t('wzErrSize');return}if(lo==null||(bunks&&up==null)){err.textContent=t('wzErrRent');return}
+    if(beds%2)bunks=false;const id='d'+(S.seq++);
+    S.dorms.push({id,name:v('#wz-name'),city:v('#wz-city'),address:v('#wz-addr')||'—',ownerId:ui.oid,bedsPerRoom:beds,bunks,tariffs:{...DEF_T,rentLower:lo,rentUpper:bunks?up:lo},rooms:makeRooms(id,floors,per,beds,bunks),readings:{},rentMonths:[todayISO().slice(0,7)],status:'active',created:todayISO()});
+    ui.dormId=id;ui.wizard=null;ui.otab='import';save();render();top0();toast(t('dormCreated'))},
+  pickDorm:d=>{ui.dormId=d.id;importPlan=null;render()},
+  room:d=>roomModal(d.room),resident:d=>residentModal(d.id),group:d=>groupModal(d.k),
+  markPaid:d=>{const s=S.bills.find(x=>x.id===d.b).shares.find(x=>x.rid===d.id);s.paid=true;s.paidAt=todayISO();s.via='cash';save();render();d.k?groupModal(d.k):residentModal(d.id);toast(t('paymentMarked'))},
+  approve:d=>{const r=res(d.id);r.status='active';save();render();toast(t('approved',{n:r.name}))},
+  reject:d=>{if(!confirm(t('rejectQ')))return;S.residents=S.residents.filter(r=>r.id!==d.id);save();render();toast(t('rejected'))},
+  evict:d=>{const r=res(d.id);if(!confirm(t('evictQ',{n:r.name})))return;r.status='left';r.bedId=null;r.roomId=null;save();closeModal();render();toast(t('moved'))},
+  reinvite:()=>{const d=D();toast(t('reinvSent',{n:S.residents.filter(r=>r.dormId===d.id&&r.invited&&!r.joined).length}))},
+  genRent:d=>{const dm=D(),m=d.m;if(dm.rentMonths.includes(m)){toast(t('rentExists'));return}const act=S.residents.filter(r=>r.dormId===dm.id&&r.status==='active');
+    for(const r of act){const b=bedOf(r),amt=priceOf(dm,b);S.bills.push({id:'i'+(S.seq++),dormId:dm.id,type:'rent',roomId:r.roomId,month:m,lines:[rentLine(b.type,amt)],total:amt,created:todayISO(),shares:[{rid:r.id,amount:amt,paid:false,paidAt:null}]})}
+    dm.rentMonths.push(m);save();render();toast(t('rentIssued',{n:act.length}))},
+  saveTariffs:()=>{const T={};let bad=false;document.querySelectorAll('[data-t]').forEach(i=>{const v=num(i.value);if(v==null||v<0)bad=true;else T[i.dataset.t]=v});if(bad){toast(t('numsNeeded'));return}Object.assign(D().tariffs,T);save();toast(t('tariffsSaved'))},
+  importSample:()=>planImport(D(),{...parseRows(SAMPLE),sheet:t('sampleSheet')}),importGo,importCancel:()=>{importPlan=null;render()},
+  appApprove:d=>{const a=S.applications.find(x=>x.id===d.id);a.status='approved';const inv=newInvite({ownerName:a.name,phone:a.phone,dormName:a.dormName,city:a.city});save();ui.atab='invites';render();toast(t('invCreated',{l:'zhatak.kz/i/'+inv.code}))},
+  appReject:d=>{if(!confirm(t('rejectAppQ')))return;S.applications.find(x=>x.id===d.id).status='rejected';save();render()},
+  inviteCreate:()=>{const v=id=>$(id).value.trim(),err=$('#iv-err'),o={ownerName:v('#iv-name'),phone:normPhone(v('#iv-phone')),dormName:v('#iv-dorm'),city:v('#iv-city')};
+    if(!o.ownerName||!o.dormName||!o.city){err.textContent=t('fillAll');return}if(!o.phone){err.textContent=t('phoneErr');return}const inv=newInvite(o);save();render();toast(t('invCreated',{l:'zhatak.kz/i/'+inv.code}))},
+  openInvite:d=>{ui.role='owner';ui.oid=null;ui.inviteCode=d.code;render();top0()},
+  adminOpenDorm:d=>{const dm=dorm(d.id);ui.role='owner';ui.oid=dm.ownerId;ui.dormId=dm.id;ui.otab='overview';ui.wizard=null;render();top0()}
+};
+
+/* ================= wiring ================= */
+$('#modal').addEventListener('click',e=>{if(e.target.id==='modal'){otp=null;closeModal()}});
+document.addEventListener('click',e=>{if(e.target.closest('[data-stop]'))return;const el=e.target.closest('[data-a]');if(!el)return;const f=A[el.dataset.a];if(f){e.preventDefault();f(el.dataset,el)}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#modal').hidden){otp=null;closeModal();return}if(e.key!=='Enter')return;const id=e.target.id;
+  if(id==='loginPhone')A.login();else if(id==='ownerPhone')A.ownerLogin();else if(id==='otp')otpCheck();else{const el=e.target.closest('.room.click');if(el)roomModal(el.dataset.room)}});
+document.addEventListener('change',e=>{const k=e.target.dataset.photo;if(k&&e.target.files[0])onPhoto(k,e.target.files[0]);if(e.target.id==='im-file'&&e.target.files[0])readFile(e.target.files[0]);if(e.target.id&&e.target.id.startsWith('wz-'))wizardSummary()});
+document.addEventListener('input',e=>{const k=e.target.dataset.mv;if(k){meter[k].val=e.target.value;updatePreview()}if(e.target.id==='otp'&&e.target.value.length===4)otpCheck();if(e.target.id&&e.target.id.startsWith('wz-'))wizardSummary()});
+
+render();if(ui.stab==='meters')updatePreview();wizardSummary();
+(async()=>{try{if(!window.claude||!window.claude.use)return;sampleFn=await window.claude.use('sample');if(sampleFn){const l=await sampleFn.limits().catch(()=>null);canImg=!!(l&&l.images)}if(ui.role==='student'&&ui.stab==='meters'&&ui.sid){render();updatePreview()}}catch(e){}})();
+
+</script>
+</body>
+</html>
