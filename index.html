@@ -2332,7 +2332,7 @@ function migratePlatform(){if(!S.platform){S.platform={tpl:{ver:1,text:AGR_TPL},
 migratePlatform();save();
 window.addEventListener('storage',e=>{if(e.key!==LS)return;const n=load();if(!n)return;S=n;
   if($('#cash-queue'))refreshQueue();else if(ui.role==='student'&&ui.sid&&$('#modal').hidden&&ui.stab==='bills')render()});
-window.addEventListener('hashchange',payHashCheck);
+window.addEventListener('hashchange',()=>{if(/platform/i.test(location.hash)){ui.role='admin';closeModal();render();top0();return}payHashCheck()});
 render();if(ui.stab==='meters')updatePreview();wizardSummary();payHashCheck();
 (async()=>{try{if(!window.claude||!window.claude.use)return;sampleFn=await window.claude.use('sample');if(sampleFn){const l=await sampleFn.limits().catch(()=>null);canImg=!!(l&&l.images)}if(ui.role==='student'&&ui.stab==='meters'&&ui.sid){render();updatePreview()}}catch(e){}})();
 
